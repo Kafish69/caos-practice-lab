@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAOS Practice Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2;--card:#ffffff;--ink:#1d1d1f;--muted:#6b6b70;--line:#e3e1dc;
+  --accent:#e2601f;--accent-soft:#fdeee5;--good:#1f8a4c;--good-soft:#e5f4ea;--bad:#c23b3b;--bad-soft:#fbe9e9;
+  --code-bg:#1e1f24;--code-ink:#e8e6e3;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#141416;--card:#1c1c20;--ink:#ecebe8;--muted:#9a9aa0;--line:#2c2c32;--accent:#f0803f;--accent-soft:#33241b;--good:#4cc17e;--good-soft:#173022;--bad:#ef6b6b;--bad-soft:#371c1c;--code-bg:#0f1013;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 8px}
+.brand{font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.sub{color:var(--muted);font-size:13px}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px}
+nav button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font:500 14px Inter,sans-serif;cursor:pointer}
+nav button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{padding:22px 0 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+h2{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+h3{font-size:17px;margin:0 0 10px}
+p.lead{color:var(--muted);margin:0 0 16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:0;background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px;font:600 14px Inter,sans-serif;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+select{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 14px Inter,sans-serif}
+.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
+pre,code,textarea{font-family:"JetBrains Mono",ui-monospace,monospace}
+pre{background:var(--code-bg);color:var(--code-ink);padding:12px 14px;border-radius:10px;overflow-x:auto;font-size:13.5px;line-height:1.5;margin:8px 0}
+code{background:var(--accent-soft);padding:1px 5px;border-radius:5px;font-size:.92em}
+pre code{background:none;padding:0}
+.opts{display:grid;gap:8px;margin-top:10px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:11px 14px;border-radius:10px;font:15px Inter,sans-serif;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{background:var(--good-soft);border-color:var(--good)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt code{background:transparent}
+.why{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:14.5px}
+.why b.ok{color:var(--good)} .why b.no{color:var(--bad)}
+input.blank{font:15px "JetBrains Mono",monospace;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:220px}
+input.blank.ok{border-color:var(--good);background:var(--good-soft)} input.blank.no{border-color:var(--bad);background:var(--bad-soft)}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 14px}
+.progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.score{font-size:40px;font-weight:700;letter-spacing:-.02em}
+.flash{perspective:1200px;cursor:pointer;user-select:none}
+.flash .inner{position:relative;min-height:230px;transition:transform .45s;transform-style:preserve-3d}
+.flash.flip .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:26px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:19px;font-weight:500}
+.face.back{transform:rotateY(180deg);font-size:16.5px;font-weight:400;background:var(--accent-soft)}
+.face small{position:absolute;top:12px;left:16px;font-size:12px;color:var(--muted);font-weight:600}
+.face pre{text-align:left;font-size:13px;width:100%}
+textarea.editor{width:100%;min-height:340px;resize:vertical;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13.5px;line-height:1.55;tab-size:4;outline:none}
+textarea.editor:focus{border-color:var(--accent)}
+ul.checks{list-style:none;padding:0;margin:10px 0 0}
+ul.checks li{padding:6px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+ul.checks li:last-child{border:0}
+.pill{display:inline-block;width:20px;font-weight:700}
+.muted{color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card);cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+.tile:hover{border-color:var(--accent)}
+.tile b{display:block;font-size:16px;margin-bottom:2px}
+.tile span{color:var(--muted);font-size:14px}
+.timer{font:600 15px "JetBrains Mono",monospace;color:var(--accent)}
+.hidden{display:none}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div><div class="brand">CAOS <span>Practice Lab</span></div><div class="sub">Computer Architectures &amp; Operating Systems · Linux commands &amp; theory</div></div>
+    </div>
+    <nav id="nav">
+      <button data-v="home" class="on">Home</button>
+      <button data-v="mock">Mock test</button>
+      <button data-v="mcq">Quiz</button>
+      <button data-v="blanks">Fill in the blanks</button>
+      <button data-v="flash">Flashcards</button>
+      <button data-v="cmd">Command drill</button>
+      <button data-v="conv">Binary · Hex · chmod</button>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<footer>Made from the CAOS Linux command reference and theory notes. Good luck on the exam.</footer>
+
+<script>
+/* ================= DATA ================= */
+const TOPICS = ["All","Navigation & files","Viewing & searching","Inodes & links","Permissions","Users & groups","Forensics","Docker & other","Theory"];
+
+const MCQ = [
+// 1 navigation & files
+{t:1,q:"Which command shows the full path of the folder you are in?",o:["ls","pwd","cd","path"],a:1,w:"pwd = Print Working Directory."},
+{t:1,q:"Which command shows hidden files AND details (permissions, owner, size)?",o:["ls -l","ls -a","ls -la","ls -R"],a:2,w:"-l = long listing, -a = all (including hidden). Together: ls -la."},
+{t:1,q:"What does <code>ls -lah</code> add compared to <code>ls -la</code>?",o:["Hidden files","Recursive listing","Human-readable sizes (KB, MB)","Inode numbers"],a:2,w:"-h = human-readable sizes."},
+{t:1,q:"What does <code>ls -R</code> do?",o:["Reverse order","Shows the content of all subfolders too (recursive)","Shows only read-only files","Refreshes the list"],a:1,w:"-R = recursive."},
+{t:1,q:"Where does <code>cd ~</code> take you?",o:["The root folder /","Your home directory","The parent folder","The previous folder"],a:1,w:"~ means your home directory."},
+{t:1,q:"What does <code>cd ..</code> do?",o:["Goes to home","Goes up one level to the parent folder","Goes to /","Lists the folder"],a:1,w:".. is the parent folder."},
+{t:1,q:"What does <code>touch file1</code> do if file1 already exists?",o:["Deletes it","Empties it","Updates its timestamp","Gives an error"],a:2,w:"touch creates an empty file, or updates the timestamp if it exists."},
+{t:1,q:"Which command renames <code>file2</code> to <code>notes</code>?",o:["cp file2 notes","rn file2 notes","mv file2 notes","rename file2"],a:2,w:"mv moves AND renames."},
+{t:1,q:"What is the difference between cp and mv?",o:["No difference","cp leaves the original in place, mv moves it","mv makes a copy, cp deletes","cp only works on folders"],a:1,w:"cp = copy (original stays). mv = move or rename (original is gone from the old place)."},
+{t:1,q:"Which command deletes a folder AND everything inside it?",o:["rmdir folder","rm folder","rm -r folder","del folder"],a:2,w:"rm -r = recursive remove. rmdir only works on empty folders."},
+{t:1,q:"<code>rmdir photos</code> fails. Why most likely?",o:["The folder is not empty","rmdir needs sudo","rmdir only deletes files","The folder is hidden"],a:0,w:"rmdir only removes empty folders."},
+{t:1,q:"What happens with <code>echo \"hi\" &gt; file.txt</code> if file.txt already has content?",o:["hi is added at the end","The content is replaced by hi","Error","Nothing"],a:1,w:"> overwrites. >> appends."},
+{t:1,q:"After <code>rm file1</code>, how do you get the file back?",o:["From the recycle bin","With undo","You can't, rm deletes permanently","With rm -u"],a:2,w:"There is no recycle bin in the terminal."},
+// 2 viewing & searching
+{t:2,q:"Which command shows only the first 5 lines of a file?",o:["tail -n 5 file","head -n 5 file","cat -5 file","less -5 file"],a:1,w:"head = start of the file, tail = end."},
+{t:2,q:"You want to watch the last lines of a log file. Which command?",o:["head","tail","cat","wc"],a:1,w:"tail shows the last lines; often used for logs."},
+{t:2,q:"What does <code>wc -l file</code> show?",o:["Number of words","Number of lines","Number of characters","File size"],a:1,w:"-l = lines, -w = words."},
+{t:2,q:"How do you quit <code>less</code>?",o:["Ctrl+Q","Esc","q","exit"],a:2,w:"q quits, space goes forward."},
+{t:2,q:"What does <code>grep -c 'special' words</code> show?",o:["The matching lines","The line numbers","Only how many lines matched","The word in capitals"],a:2,w:"-c = count."},
+{t:2,q:"Which grep option ignores upper/lower case?",o:["-c","-i","-n","-w"],a:1,w:"-i = ignore case."},
+{t:2,q:"Which grep option shows the line number of each match?",o:["-n","-l","-c","-A"],a:0,w:"-n = number."},
+{t:2,q:"<code>grep -w 'cat'</code> will match…",o:["category","concatenate","cat (only the whole word)","all of these"],a:2,w:"-w = whole word only."},
+{t:2,q:"What does <code>grep -A 5 'error' log</code> show?",o:["5 lines before each match","The match plus 5 lines after it","Only 5 matches","Matches in 5 files"],a:1,w:"-A = After."},
+{t:2,q:"Which command finds files by NAME?",o:["grep","find","locate -c","search"],a:1,w:"find /path -name 'pattern'. grep searches text INSIDE files."},
+{t:2,q:"In <code>find ... -exec ls -la {} \\;</code>, what does <code>{}</code> stand for?",o:["The home folder","Each file that find found","All files at once","Nothing"],a:1,w:"{} is replaced by each found file; \\; ends the -exec command."},
+{t:2,q:"What does the pipe <code>|</code> do in <code>ls -laR ~ | less</code>?",o:["Saves the output to a file","Sends the output of ls as input to less","Runs both at the same time","Comments out less"],a:1,w:"| sends output of one command into the next."},
+// 3 inodes & links
+{t:3,q:"What is an inode?",o:["A hidden file","A unique number that stores a file's metadata","A type of link","A folder"],a:1,w:"The inode holds permissions, owner, size, location on disk. The filename just points to it."},
+{t:3,q:"Which command shows a file's inode number?",o:["ls -l","ls -i","ln -i","inode file"],a:1,w:"ls -i (stat also shows it)."},
+{t:3,q:"Two names share the SAME inode. What are they?",o:["Soft links","Hard links","Hidden files","Copies made with cp"],a:1,w:"A hard link is another name for the same file, same inode."},
+{t:3,q:"The original file of a SOFT link is deleted. What happens to the link?",o:["It still works","It breaks","It becomes a hard link","It becomes the original"],a:1,w:"A soft link is a shortcut; without the original it points to nothing."},
+{t:3,q:"When is a file with hard links really deleted?",o:["When the first name is removed","When all hard links are removed","Never","When you reboot"],a:1,w:"The data stays as long as at least one hard link exists."},
+{t:3,q:"Which link can point to a file on a DIFFERENT disk?",o:["Hard link","Soft (symbolic) link","Both","Neither"],a:1,w:"Soft links can cross disks; hard links can't."},
+{t:3,q:"How do you create a hidden file?",o:["touch -h file","hide file","touch .file","chmod 000 file"],a:2,w:"Any name starting with a dot is hidden."},
+// 4 permissions
+{t:4,q:"What does <code>sudo</code> do?",o:["Switches user permanently","Runs one command with root (admin) rights","Deletes a user","Shows the user ID"],a:1,w:"Super User Do."},
+{t:4,q:"What number stands for read + write + execute?",o:["5","6","7","4"],a:2,w:"4 + 2 + 1 = 7."},
+{t:4,q:"What does <code>chmod 755 file</code> mean?",o:["Everyone can do everything","Owner rwx, group and others r-x","Owner r-x, others rwx","Only the owner can read"],a:1,w:"7 = rwx for owner, 5 = r-x for group, 5 = r-x for others."},
+{t:4,q:"Which permissions does <code>chmod 640</code> give?",o:["rw-r-----","rwxr-----","rw-rw----","r--r-----"],a:0,w:"6 = rw-, 4 = r--, 0 = ---."},
+{t:4,q:"Which command changes the OWNER of a file?",o:["chmod","chown","chgrp -o","owner"],a:1,w:"chown = change owner. chmod = change permissions."},
+{t:4,q:"Which command shows inode, permissions and timestamps of a file?",o:["stat","ls","id","fsstat"],a:0,w:"stat file."},
+{t:4,q:"What does <code>truncate -s -1 config.yml</code> do?",o:["Deletes the file","Makes it 1 byte smaller (removes the last character)","Sets its size to 1 byte","Removes the first line"],a:1,w:"-s -1 = shrink by 1 byte."},
+{t:4,q:"The prompt ends with <code>#</code>. Who are you logged in as?",o:["A normal user","root","A guest","Docker"],a:1,w:"# = root, $ = normal user."},
+// 5 users & groups
+{t:5,q:"Which command creates a new user?",o:["usermod","useradd","adduser -g","newuser"],a:1,w:"useradd creates, usermod modifies, id shows info."},
+{t:5,q:"In <code>useradd -s /bin/bash -m -u 1206 linuxUser</code>, what does <code>-m</code> do?",o:["Sets the shell","Creates a home directory","Sets the UID","Adds to a group"],a:1,w:"-m = make home dir, -s = shell, -u = UID."},
+{t:5,q:"Which command adds linuxUser to the sudo group WITHOUT removing other groups?",o:["usermod -G sudo linuxUser","usermod -aG sudo linuxUser","groupadd sudo linuxUser","useradd -aG sudo"],a:1,w:"-a = append. Without -a, -G replaces all groups."},
+{t:5,q:"What does <code>su - linuxUser</code> do?",o:["Deletes linuxUser","Switches to linuxUser and loads their environment","Gives linuxUser sudo","Shows linuxUser's ID"],a:1,w:"su = switch user; the - loads their environment."},
+{t:5,q:"Which command shows your UID, GID and all your groups?",o:["whoami","id","groups -a","stat"],a:1,w:"id."},
+{t:5,q:"Which file contains the hashed passwords?",o:["/etc/passwd","/etc/shadow","/etc/group","/home/passwords"],a:1,w:"/etc/shadow, readable only by root. /etc/passwd has account info."},
+{t:5,q:"Which file lists the groups and their members?",o:["/etc/group","/etc/shadow","/etc/users","/var/group"],a:0,w:"/etc/group."},
+{t:5,q:"Which command deletes user demo AND their home folder?",o:["userdel demo","deluser --remove-home demo","rm -r demo","deluser demo -h"],a:1,w:"deluser --remove-home."},
+{t:5,q:"What does <code>chage</code> manage?",o:["Group changes","Password aging (expiry, warnings)","File ownership","Shell changes"],a:1,w:"Change Age: chage -d 0 -m 5 -M 150 -W 5 user."},
+{t:5,q:"In <code>chage -d 0 koen2</code>, what does <code>-d 0</code> achieve?",o:["Deletes the password","Forces a password change at next login","Disables the account","Sets expiry to 0 days"],a:1,w:"Setting the last change date to 0 forces a change at next login."},
+// 6 forensics
+{t:6,q:"What is the FIRST rule of digital forensics?",o:["Delete suspicious files","Never work on the original evidence; make a copy","Format the disk","Mount the original disk read-write"],a:1,w:"Always make a bit-for-bit copy with dd and work on the copy."},
+{t:6,q:"Which command makes a bit-for-bit copy of a disk?",o:["cp","dd","losetup","mount"],a:1,w:"dd if=/dev/sdb of=image.img"},
+{t:6,q:"In <code>dd if=/dev/sdb of=image.img</code>, what is <code>if</code>?",o:["The output file","The input (source)","A condition","The image format"],a:1,w:"if = input file, of = output file."},
+{t:6,q:"What does <code>losetup</code> do?",o:["Lists deleted files","Turns an image file into a virtual (loop) disk","Copies a disk","Shows the file system"],a:1,w:"losetup -fPr image.img makes it usable as /dev/loop0."},
+{t:6,q:"Which command lists files in an image, INCLUDING deleted ones?",o:["ls -a","fls","icat","fdisk"],a:1,w:"fls -rp; deleted files are marked with *."},
+{t:6,q:"Which command recovers a file using its inode number?",o:["icat","fls","strings","stat"],a:0,w:"icat /dev/loop0p1 18 > file.png"},
+{t:6,q:"Which command shows the partition table?",o:["fdisk -l","mount","fsstat","df"],a:0,w:"fdisk -l /dev/loop0"},
+{t:6,q:"What does <code>strings file.png</code> do?",o:["Converts the image to text","Extracts readable text from any file","Counts the strings","Hides text in the file"],a:1,w:"Useful to find hidden text in binaries/images."},
+{t:6,q:"Correct forensic order?",o:["fls → dd → icat → losetup","dd → losetup → fls → icat","losetup → dd → icat → fls","icat → fls → dd → losetup"],a:1,w:"dd makes the copy, losetup makes it usable, fls lists files, icat recovers them."},
+{t:6,q:"In fls output, how is a deleted file marked?",o:["With #","With *","With D","It isn't shown"],a:1,w:"Deleted files are marked with *."},
+// 7 docker & other
+{t:7,q:"Which command lists ALL containers, also stopped ones?",o:["docker ps","docker ps -a","docker list","docker images"],a:1,w:"docker ps shows running ones; -a shows all."},
+{t:7,q:"How do you restart a stopped container and attach to it?",o:["docker run -it name","docker start -ai name","docker attach -s name","docker exec name"],a:1,w:"docker start -ai caoslab5.1"},
+{t:7,q:"Which command copies a file from the host into a container?",o:["cp file container:/path","docker cp file container:/path","docker mv file","scp file container"],a:1,w:"docker cp."},
+{t:7,q:"Containers vs virtual machines:",o:["Containers are heavier","Containers share the host kernel and are lighter","VMs share the host kernel","They are the same"],a:1,w:"Containers share the kernel; VMs run a whole OS."},
+{t:7,q:"What does <code>alias ll='ls -la'</code> do?",o:["Renames ls","Makes ll a shortcut for ls -la","Deletes ls","Lists aliases"],a:1,w:"alias = shortcut."},
+{t:7,q:"Which command downloads a file from the internet?",o:["get","wget","download","curl -d"],a:1,w:"wget url -O filename"},
+{t:7,q:"Which shows the commands you typed before?",o:["log","history","last","past"],a:1,w:"history."},
+// 8 theory
+{t:8,q:"Ubuntu and Kali are…",o:["Kernels","Linux distributions","Shells","Hypervisors"],a:1,w:"Distributions (versions) of Linux."},
+{t:8,q:"What is the kernel?",o:["The terminal","The core of the OS that manages hardware and processes","A Linux distribution","A file system"],a:1,w:"The kernel is the core."},
+{t:8,q:"Where are system configuration files?",o:["/home","/etc","/var","/bin"],a:1,w:"/etc = configuration. /var = logs. /bin = programs."},
+{t:8,q:"Where are log files usually stored?",o:["/etc","/var","/root","/tmp"],a:1,w:"/var holds variable data like logs."},
+{t:8,q:"What is the top of the Linux file system?",o:["/home","~","/","C:\\"],a:2,w:"/ (root)."},
+{t:8,q:"A 1 KB file on a disk with 4 KB clusters. How much slack space?",o:["0 KB","1 KB","3 KB","4 KB"],a:2,w:"A file uses whole clusters: 4 − 1 = 3 KB unused (slack)."},
+{t:8,q:"How many bytes in 1 KiB?",o:["1000","1024","1048","512"],a:1,w:"KiB = binary = 1024. KB = decimal = 1000."},
+{t:8,q:"How many bits is one hexadecimal digit?",o:["2","4","8","16"],a:1,w:"One hex digit = 4 bits (0–15)."},
+{t:8,q:"What is hex F in decimal?",o:["14","15","16","10"],a:1,w:"A=10, B=11, C=12, D=13, E=14, F=15."},
+{t:8,q:"What is binary 1010 in decimal?",o:["8","10","12","5"],a:1,w:"8 + 0 + 2 + 0 = 10."},
+{t:8,q:"VMware Workstation is a…",o:["Container engine","Hosted hypervisor","Distribution","Kernel"],a:1,w:"Hosted hypervisors run on top of a host OS."}
+];
+
+const BLANKS = [
+{t:1,q:"Show the folder you are in: ____",a:["pwd"]},
+{t:1,q:"Go up one folder: <code>cd ____</code>",a:[".."]},
+{t:1,q:"Go to your home folder: <code>cd ____</code>",a:["~"]},
+{t:1,q:"List including hidden files: <code>ls ____</code>",a:["-a"]},
+{t:1,q:"Create a folder: <code>____ Documents</code>",a:["mkdir"]},
+{t:1,q:"Create an empty file: <code>____ file1</code>",a:["touch"]},
+{t:1,q:"Delete a folder with everything in it: <code>rm ____ Subdir</code>",a:["-r"]},
+{t:1,q:"Add a line at the END of a file: <code>echo \"line\" ____ file.txt</code>",a:[">>"]},
+{t:2,q:"Show the last 10 lines: <code>____ -n 10 file</code>",a:["tail"]},
+{t:2,q:"Count the lines: <code>wc ____ file</code>",a:["-l"]},
+{t:2,q:"Count the words: <code>wc ____ file</code>",a:["-w"]},
+{t:2,q:"Search ignoring case: <code>grep ____ 'linux' file</code>",a:["-i"]},
+{t:2,q:"Show how many lines match: <code>grep ____ 'special' words</code>",a:["-c"]},
+{t:2,q:"Find files whose name starts with s in /etc: <code>find /etc ____ 's*'</code>",a:["-name"]},
+{t:2,q:"Send the output of ls into less: <code>ls -la ____ less</code>",a:["|"]},
+{t:3,q:"Create a soft link: <code>ln ____ /etc/passwd ~</code>",a:["-s"]},
+{t:3,q:"Show the inode number: <code>ls ____ file</code>",a:["-i"]},
+{t:3,q:"Hard links share the same ____",a:["inode"]},
+{t:4,q:"Run as administrator: <code>____ cp /etc/shadow backup/</code>",a:["sudo"]},
+{t:4,q:"Change permissions: <code>____ 755 file</code>",a:["chmod"]},
+{t:4,q:"Change the owner: <code>____ user file</code>",a:["chown"]},
+{t:4,q:"Read = 4, write = 2, execute = ____",a:["1"]},
+{t:4,q:"rw-r--r-- as a number: ____",a:["644"]},
+{t:4,q:"The root prompt ends with ____",a:["#"]},
+{t:5,q:"Create a user with a home folder: <code>useradd ____ linuxUser</code>",a:["-m"]},
+{t:5,q:"Add to a group, keep other groups: <code>usermod ____ sudo linuxUser</code>",a:["-ag"]},
+{t:5,q:"Create a group: <code>____ linuxlabs</code>",a:["groupadd"]},
+{t:5,q:"Show UID and groups: ____",a:["id"]},
+{t:5,q:"Hashed passwords are in /etc/____",a:["shadow"]},
+{t:5,q:"Change a password: <code>____ koen2</code>",a:["passwd"]},
+{t:6,q:"Bit-for-bit copy: <code>____ if=/dev/sdb of=image.img</code>",a:["dd"]},
+{t:6,q:"Make an image usable as a disk: <code>____ -fPr image.img</code>",a:["losetup"]},
+{t:6,q:"List files incl. deleted: <code>____ -rp /dev/loop0p1</code>",a:["fls"]},
+{t:6,q:"Recover by inode: <code>____ /dev/loop0p1 18 &gt; file.png</code>",a:["icat"]},
+{t:6,q:"Show partitions: <code>fdisk ____</code>",a:["-l"]},
+{t:7,q:"List all containers: <code>docker ps ____</code>",a:["-a"]},
+{t:7,q:"Start a stopped container and attach: <code>docker start ____ caoslab5.1</code>",a:["-ai"]},
+{t:7,q:"Make a shortcut: <code>____ ll='ls -la'</code>",a:["alias"]},
+{t:8,q:"1 KiB = ____ bytes",a:["1024"]},
+{t:8,q:"Hex B = ____ in decimal",a:["11"]},
+{t:8,q:"Configuration files live in ____",a:["/etc","etc"]},
+{t:8,q:"Unused space in the last cluster is called ____ space",a:["slack"]}
+];
+
+const FLASH = [
+{t:1,f:"pwd",b:"Print Working Directory: shows the full path of where you are."},
+{t:1,f:"ls -l / -a / -la / -lah",b:"-l long listing (permissions, owner, size, date)<br>-a all incl. hidden<br>-la both<br>-lah + human-readable sizes"},
+{t:1,f:"ls -R",b:"Recursive: content of the folder and all subfolders. e.g. ls -laR ~"},
+{t:1,f:"cd ~ vs cd ..",b:"cd ~ → home directory<br>cd .. → one level up"},
+{t:1,f:"mkdir / touch",b:"mkdir: new folder<br>touch: empty file (or update timestamp)"},
+{t:1,f:"cp vs mv",b:"cp: copy, original stays<br>mv: move or rename"},
+{t:1,f:"rm / rm -r / rmdir",b:"rm: delete file (permanent!)<br>rm -r: folder + contents<br>rmdir: only empty folders"},
+{t:1,f:"&gt; vs &gt;&gt;",b:"&gt; overwrites the file<br>&gt;&gt; appends to the end"},
+{t:2,f:"cat / head / tail / less",b:"cat: whole file<br>head -n 5: first 5 lines<br>tail -n 10: last 10 lines<br>less: page by page (q to quit)"},
+{t:2,f:"wc -l / wc -w",b:"-l: number of lines<br>-w: number of words"},
+{t:2,f:"grep options",b:"-i ignore case<br>-n line numbers<br>-c count<br>-w whole word<br>-A 5 five lines after"},
+{t:2,f:"find",b:"find /path -name 'pattern' → files by name (wildcards * ?)<br>-exec cmd {} \\; → run a command on each"},
+{t:2,f:"| (pipe)",b:"Sends the output of one command as input to the next: ls -la | less"},
+{t:3,f:"Inode",b:"Unique number per file. Stores metadata: permissions, owner, size, location. The filename points to it."},
+{t:3,f:"Soft link (ln -s)",b:"A shortcut. Breaks if the original is deleted. Can cross disks."},
+{t:3,f:"Hard link (ln)",b:"Another name for the same file. Same inode. Data deleted only when all links are gone."},
+{t:3,f:"Hidden file",b:"Name starts with a dot (.file). See it with ls -a."},
+{t:4,f:"r w x values",b:"read 4 · write 2 · execute 1<br>7 = rwx · 6 = rw- · 5 = r-x · 4 = r--"},
+{t:4,f:"chmod 755",b:"owner rwx, group r-x, others r-x"},
+{t:4,f:"chmod vs chown",b:"chmod: change permissions<br>chown: change owner"},
+{t:4,f:"sudo",b:"Super User Do: run one command as root."},
+{t:4,f:"stat",b:"Detailed file info: inode, permissions, timestamps."},
+{t:4,f:"truncate -s -1",b:"Makes a file 1 byte smaller (removes the last character)."},
+{t:4,f:"$ vs #",b:"$ normal user prompt<br># root prompt"},
+{t:5,f:"useradd flags",b:"-m make home dir<br>-s shell<br>-u UID<br>useradd -s /bin/bash -m -u 1206 linuxUser"},
+{t:5,f:"usermod -aG",b:"Add a user to a group without removing their other groups."},
+{t:5,f:"su - user",b:"Switch user; the - loads their environment."},
+{t:5,f:"id",b:"Shows UID, GID and all groups."},
+{t:5,f:"deluser --remove-home",b:"Deletes the user and their home folder."},
+{t:5,f:"chage",b:"Password aging: -d 0 force change · -m min days · -M max days · -W warning days"},
+{t:5,f:"/etc/passwd · /etc/shadow · /etc/group",b:"passwd: account info<br>shadow: hashed passwords (root only)<br>group: groups and members"},
+{t:6,f:"Forensics golden rule",b:"Never work on the original. Make a bit-for-bit copy with dd and work on the copy."},
+{t:6,f:"dd",b:"Disk Duplicator: dd if=/dev/sdb of=image.img (if = input, of = output)"},
+{t:6,f:"losetup",b:"Turns an image into a loop device: losetup -fPr image.img"},
+{t:6,f:"fdisk -l",b:"Shows partition tables."},
+{t:6,f:"mount",b:"Makes a partition accessible as a folder: mount /dev/loop0p1 /mnt"},
+{t:6,f:"fls",b:"Lists files in an image, deleted ones marked with *: fls -rp /dev/loop0p1"},
+{t:6,f:"icat",b:"Extracts a file by inode: icat /dev/loop0p1 18 > file.png"},
+{t:6,f:"fsstat / strings",b:"fsstat: file system details<br>strings: readable text from any file"},
+{t:6,f:"Forensic order",b:"dd → losetup → fdisk -l → fls → icat"},
+{t:7,f:"docker ps -a",b:"All containers, running and stopped."},
+{t:7,f:"docker run -it --name",b:"Create and start a new container interactively."},
+{t:7,f:"docker start -ai",b:"Start a stopped container and attach to it."},
+{t:7,f:"docker cp",b:"Copy files between host and container: docker cp file container:/path"},
+{t:7,f:"wget · history · alias",b:"wget url -O name: download<br>history: past commands<br>alias ll='ls -la': shortcut"},
+{t:8,f:"Linux, distribution, kernel",b:"Linux = open-source OS. Ubuntu/Kali = distributions. Kernel = core managing hardware and processes."},
+{t:8,f:"File system folders",b:"/ root · /home users · /etc config · /bin, /usr/bin programs · /var logs"},
+{t:8,f:"Cluster & slack space",b:"Files use whole clusters (often 4 KB). Slack = unused part of the last cluster. 1 KB file → 3 KB slack."},
+{t:8,f:"KB vs KiB",b:"1 KB = 1000 bytes (decimal)<br>1 KiB = 1024 bytes (binary)"},
+{t:8,f:"Binary place values",b:"128 64 32 16 8 4 2 1"},
+{t:8,f:"Hex digits",b:"0–9 then A=10 B=11 C=12 D=13 E=14 F=15. One hex digit = 4 bits."},
+{t:8,f:"VM vs container",b:"VM: full computer in a computer (VMware = hosted hypervisor).<br>Container (Docker): lighter, shares the host kernel."}
+];
+
+/* Command drill: task → accepted answers (regex on normalized input) */
+const CMD = [
+{t:1,q:"Show the full path of the folder you are in.",a:[/^pwd$/],s:"pwd"},
+{t:1,q:"List all files, including hidden ones, with details.",a:[/^ls -(la|al)$/],s:"ls -la"},
+{t:1,q:"List all files with details and human-readable sizes, including hidden ones.",a:[/^ls -(lah|lha|alh|ahl|hla|hal)$/],s:"ls -lah"},
+{t:1,q:"List everything in your home folder and all subfolders, with details and hidden files.",a:[/^ls -(laR|alR|Rla|lRa|aRl|Ral) ~\/?$/],s:"ls -laR ~"},
+{t:1,q:"Go to your home directory.",a:[/^cd( ~\/?)?$/],s:"cd ~"},
+{t:1,q:"Go up one folder.",a:[/^cd \.\.\/?$/],s:"cd .."},
+{t:1,q:"Create a folder called <code>backup</code>.",a:[/^mkdir backup\/?$/],s:"mkdir backup"},
+{t:1,q:"Create an empty file called <code>notes.txt</code>.",a:[/^touch notes\.txt$/],s:"touch notes.txt"},
+{t:1,q:"Copy <code>file1</code> into the folder <code>backup</code>.",a:[/^cp file1 backup\/?$/],s:"cp file1 backup/"},
+{t:1,q:"Rename <code>old.txt</code> to <code>new.txt</code>.",a:[/^mv old\.txt new\.txt$/],s:"mv old.txt new.txt"},
+{t:1,q:"Delete the folder <code>Subdir</code> and everything in it.",a:[/^rm -(r|rf|fr|R) Subdir\/?$/],s:"rm -r Subdir"},
+{t:1,q:"Delete the EMPTY folder <code>empty</code>.",a:[/^rmdir empty\/?$/],s:"rmdir empty"},
+{t:1,q:"Write the text <code>hello</code> into <code>file.txt</code>, replacing what's in it.",a:[/^echo ["']?hello["']? > file\.txt$/],s:"echo \"hello\" > file.txt"},
+{t:1,q:"Add the line <code>bye</code> to the end of <code>file.txt</code>.",a:[/^echo ["']?bye["']? >> file\.txt$/],s:"echo \"bye\" >> file.txt"},
+{t:2,q:"Show the first 5 lines of <code>data.txt</code>.",a:[/^head -n ?5 data\.txt$/,/^head -5 data\.txt$/],s:"head -n 5 data.txt"},
+{t:2,q:"Show the last 10 lines of <code>syslog</code>.",a:[/^tail -n ?10 syslog$/,/^tail -10 syslog$/,/^tail syslog$/],s:"tail -n 10 syslog"},
+{t:2,q:"Count the lines in <code>words</code>.",a:[/^wc -l words$/],s:"wc -l words"},
+{t:2,q:"Count the words in <code>essay.txt</code>.",a:[/^wc -w essay\.txt$/],s:"wc -w essay.txt"},
+{t:2,q:"Search for <code>error</code> in <code>log.txt</code>, ignoring upper/lower case.",a:[/^grep -i ["']?error["']? log\.txt$/],s:"grep -i 'error' log.txt"},
+{t:2,q:"Count how many lines in <code>words</code> contain <code>special</code>.",a:[/^grep -c ["']?special["']? words$/],s:"grep -c 'special' words"},
+{t:2,q:"Show the lines with <code>linux</code> in <code>file</code>, with their line numbers.",a:[/^grep -n ["']?linux["']? file$/],s:"grep -n 'linux' file"},
+{t:2,q:"Find the word <code>sentence</code> in <code>file</code> and show 5 lines after each match.",a:[/^grep -A ?5 ["']?sentence["']? file$/],s:"grep -A 5 \"sentence\" file"},
+{t:2,q:"Find all files in <code>/etc</code> whose name starts with <code>s</code>.",a:[/^find \/etc -name ["']s\*["']$/],s:"find /etc -name 's*'"},
+{t:2,q:"Show <code>ls -la</code> page by page.",a:[/^ls -(la|al) \| less$/],s:"ls -la | less"},
+{t:2,q:"Save the output of <code>ls</code> into <code>listing.txt</code>.",a:[/^ls > listing\.txt$/],s:"ls > listing.txt"},
+{t:3,q:"Show the inode number of <code>testfile</code>.",a:[/^ls -i testfile$/,/^stat testfile$/],s:"ls -i testfile"},
+{t:3,q:"Create a soft link to <code>/etc/passwd</code> in your home folder.",a:[/^ln -s \/etc\/passwd ~\/?$/],s:"ln -s /etc/passwd ~"},
+{t:3,q:"Create a hard link called <code>copy2</code> to the file <code>original</code>.",a:[/^ln original copy2$/],s:"ln original copy2"},
+{t:3,q:"Create a hidden file called <code>secret</code>.",a:[/^touch \.secret$/],s:"touch .secret"},
+{t:4,q:"Give <code>script.sh</code>: owner rwx, group r-x, others r-x.",a:[/^chmod 755 script\.sh$/],s:"chmod 755 script.sh"},
+{t:4,q:"Give <code>notes</code>: owner rw-, group r--, others nothing.",a:[/^chmod 640 notes$/],s:"chmod 640 notes"},
+{t:4,q:"Make <code>alice</code> the owner of <code>report</code>.",a:[/^(sudo )?chown alice report$/],s:"chown alice report"},
+{t:4,q:"Copy <code>/etc/shadow</code> into <code>backup/</code> (you need root rights).",a:[/^sudo cp \/etc\/shadow backup\/?$/],s:"sudo cp /etc/shadow backup/"},
+{t:4,q:"Show detailed info (inode, permissions, timestamps) of <code>file</code>.",a:[/^stat file$/],s:"stat file"},
+{t:4,q:"Remove the last character of <code>config.yml</code>.",a:[/^truncate -s -1 config\.yml$/],s:"truncate -s -1 config.yml"},
+{t:5,q:"Create user <code>linuxUser</code> with a home folder, bash shell and UID 1206.",a:[/^(sudo )?useradd(?=.* -m)(?=.* -s \/bin\/bash)(?=.* -u 1206).* linuxUser$/],s:"useradd -s /bin/bash -m -u 1206 linuxUser"},
+{t:5,q:"Add <code>linuxUser</code> to the <code>sudo</code> group without removing other groups.",a:[/^(sudo )?usermod -aG sudo linuxUser$/],s:"usermod -aG sudo linuxUser"},
+{t:5,q:"Create a group called <code>linuxlabs</code>.",a:[/^(sudo )?groupadd linuxlabs$/],s:"groupadd linuxlabs"},
+{t:5,q:"Switch to user <code>linuxUser</code> and load their environment.",a:[/^su - linuxUser$/],s:"su - linuxUser"},
+{t:5,q:"Show the UID, GID and groups of <code>koenk</code>.",a:[/^id koenk$/],s:"id koenk"},
+{t:5,q:"Delete user <code>demo</code> and their home folder.",a:[/^(sudo )?deluser --remove-home demo$/],s:"deluser --remove-home demo"},
+{t:5,q:"Change the password of <code>koen2</code>.",a:[/^(sudo )?passwd koen2$/],s:"passwd koen2"},
+{t:5,q:"Force <code>koen2</code> to change their password at the next login.",a:[/^(sudo )?chage -d 0 koen2$/],s:"chage -d 0 koen2"},
+{t:6,q:"Make a bit-for-bit copy of <code>/dev/sdb</code> into <code>image.img</code>.",a:[/^(sudo )?dd if=\/dev\/sdb of=image\.img$/],s:"dd if=/dev/sdb of=image.img"},
+{t:6,q:"Turn <code>image.img</code> into a read-only loop device (with partitions).",a:[/^(sudo )?losetup -fPr image\.img$/],s:"losetup -fPr image.img"},
+{t:6,q:"Show the partition table of <code>/dev/loop0</code>.",a:[/^(sudo )?fdisk -l \/dev\/loop0$/],s:"fdisk -l /dev/loop0"},
+{t:6,q:"Mount <code>/dev/loop0p1</code> on <code>/mnt</code>.",a:[/^(sudo )?mount \/dev\/loop0p1 \/mnt\/?$/],s:"mount /dev/loop0p1 /mnt"},
+{t:6,q:"List all files, including deleted ones, in <code>/dev/loop0p1</code> (recursive, full paths).",a:[/^(sudo )?fls -rp \/dev\/loop0p1$/],s:"fls -rp /dev/loop0p1"},
+{t:6,q:"Recover the file with inode 18 from <code>/dev/loop0p1</code> into <code>file.png</code>.",a:[/^(sudo )?icat \/dev\/loop0p1 18 > file\.png$/],s:"icat /dev/loop0p1 18 > file.png"},
+{t:6,q:"Show the readable text inside <code>file.png</code>.",a:[/^strings file\.png$/],s:"strings file.png"},
+{t:7,q:"List all Docker containers, also stopped ones.",a:[/^docker ps -a$/],s:"docker ps -a"},
+{t:7,q:"Start the stopped container <code>caoslab5.1</code> and attach to it.",a:[/^docker start -ai caoslab5\.1$/],s:"docker start -ai caoslab5.1"},
+{t:7,q:"Make <code>ll</code> a shortcut for <code>ls -la</code>.",a:[/^alias ll=['"]ls -(la|al)['"]$/],s:"alias ll='ls -la'"},
+{t:7,q:"Show the commands you typed before.",a:[/^history$/],s:"history"}
+];
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const norm = s => s.toLowerCase().replace(/\s+/g,"");
+const normCmd = s => s.trim().replace(/^\$\s*/,"").replace(/\s+/g," ");
+const byTopic = (arr, t) => t == 0 ? arr : arr.filter(x => x.t == t);
+const topicSelect = id => `<select id="${id}">${TOPICS.map((t,i)=>`<option value="${i}">${t}</option>`).join("")}</select>`;
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+let timerHandle = null;
+function stopTimer(){ if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
+function store(k, v){ try { localStorage.setItem("caos-"+k, JSON.stringify(v)); } catch(e){} }
+function load(k, d){ try { const v = localStorage.getItem("caos-"+k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+
+/* ===== random conversion questions ===== */
+const PERM = n => ["---","--x","-w-","-wx","r--","r-x","rw-","rwx"][n];
+function genConv(){
+  const kind = rnd(0, 7);
+  if (kind === 0) { const n = rnd(1, 255); return {t:8, q:`Convert decimal <b>${n}</b> to binary.`, a:[n.toString(2)], w:`${n} = ${n.toString(2)}. Place values: 128 64 32 16 8 4 2 1.`}; }
+  if (kind === 1) { const n = rnd(1, 255), b = n.toString(2).padStart(8,"0"); return {t:8, q:`Convert binary <b>${b}</b> to decimal.`, a:[String(n)], w:`Add the place values of each 1: ${b.split("").map((c,i)=>c==="1"?2**(7-i):null).filter(x=>x!==null).join(" + ")} = ${n}.`}; }
+  if (kind === 2) { const n = rnd(16, 255); return {t:8, q:`Convert decimal <b>${n}</b> to hexadecimal.`, a:[n.toString(16)], w:`${n} = ${Math.floor(n/16)} × 16 + ${n%16} → ${n.toString(16).toUpperCase()}.`}; }
+  if (kind === 3) { const n = rnd(16, 255), h = n.toString(16).toUpperCase(); return {t:8, q:`Convert hexadecimal <b>${h}</b> to decimal.`, a:[String(n)], w:`${h[0]} = ${parseInt(h[0],16)} × 16, plus ${h[1]} = ${parseInt(h[1],16)} → ${n}.`}; }
+  if (kind === 4) { const n = rnd(1, 255), b = n.toString(2).padStart(8,"0"); return {t:8, q:`Convert binary <b>${b}</b> to hexadecimal.`, a:[n.toString(16)], w:`Split in groups of 4 bits: ${b.slice(0,4)} = ${parseInt(b.slice(0,4),2).toString(16).toUpperCase()}, ${b.slice(4)} = ${parseInt(b.slice(4),2).toString(16).toUpperCase()} → ${n.toString(16).toUpperCase()}.`}; }
+  if (kind === 5) { const o=[rnd(4,7),rnd(0,7),rnd(0,7)], s=o.map(PERM).join(""); return {t:4, q:`Write <b><code>${s}</code></b> as a chmod number.`, a:[o.join("")], w:`r=4, w=2, x=1 per group: ${o.join(" ")} → chmod ${o.join("")}.`}; }
+  if (kind === 6) { const o=[rnd(4,7),rnd(0,7),rnd(0,7)]; return {t:4, q:`Write <b>chmod ${o.join("")}</b> as rwx letters (9 characters).`, a:[o.map(PERM).join("")], w:`${o.map(n=>n+" = "+PERM(n)).join(", ")}.`}; }
+  const size = rnd(1, 15) * 512, cl = 4096, used = Math.ceil(size / cl) * cl;
+  return {t:8, q:`A file of <b>${size} bytes</b> on a disk with 4096-byte (4 KiB) clusters. How many bytes of slack space?`, a:[String(used - size)], w:`It uses ${used/cl} cluster(s) = ${used} bytes. Slack = ${used} − ${size} = ${used - size}.`};
+}
+
+/* ================= ROUTER ================= */
+const VIEWS = {home, mock, mcq, blanks, flash, cmd, conv};
+function go(v){
+  stopTimer();
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  (VIEWS[v] || home)();
+  window.scrollTo(0,0);
+  try { if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v); } catch(e){}
+}
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => go(b.dataset.v));
+
+/* ================= HOME ================= */
+function home(){
+  const best = load("best", null);
+  app.innerHTML = `
+  <div class="card">
+    <h2>Ready for CAOS?</h2>
+    <p class="lead">${MCQ.length} quiz questions, ${BLANKS.length} fill-in-the-blanks, ${FLASH.length} flashcards, ${CMD.length} command tasks and unlimited random binary / hex / chmod questions. Everything is shuffled, so every round is different.</p>
+    ${best ? `<p class="muted" style="margin:0">Your best mock test: <b>${best}%</b></p>` : ""}
+  </div>
+  <div class="grid2">
+    <button class="tile" data-go="mock"><b>Mock test</b><span>15 questions + 8 blanks + 6 commands + 4 conversions, 45-min timer</span></button>
+    <button class="tile" data-go="mcq"><b>Quiz</b><span>Multiple choice with instant explanations</span></button>
+    <button class="tile" data-go="blanks"><b>Fill in the blanks</b><span>Type the missing command or option</span></button>
+    <button class="tile" data-go="flash"><b>Flashcards</b><span>Every command and concept, tap to flip</span></button>
+    <button class="tile" data-go="cmd"><b>Command drill</b><span>Read the task, type the full command</span></button>
+    <button class="tile" data-go="conv"><b>Binary · Hex · chmod</b><span>Endless random conversions</span></button>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>How to use this</h3>
+    <p class="muted" style="margin:0">Warm up with Flashcards, then do the Command drill per topic until you can type every command without thinking. Practise conversions every day, they appear in exams. Finish with a Mock test.</p>
+  </div>`;
+  app.querySelectorAll("[data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+/* ================= QUIZ ================= */
+function mcqHTML(q, i){
+  return `<div class="card" data-i="${i}">
+    <span class="tag">${TOPICS[q.t]}</span>
+    <div><b>${i+1}.</b> ${q.q}</div>
+    <div class="opts">${q.order.map(k => `<button class="opt" data-k="${k}">${q.o[k]}</button>`).join("")}</div>
+    <div class="why hidden"></div>
+  </div>`;
+}
+function mcq(){
+  app.innerHTML = `<div class="card"><h2>Quiz</h2><p class="lead">Pick a topic or mix everything. You get 10 random questions.</p>
+    <div class="row">${topicSelect("mt")}<button class="btn" id="mgo">Start</button></div></div><div id="mq"></div>`;
+  $("#mgo").onclick = () => {
+    const pool = shuffle(byTopic(MCQ, +$("#mt").value)).slice(0, 10).map(q => ({...q, order: shuffle([...q.o.keys()]), done:false}));
+    let score = 0, answered = 0;
+    const box = $("#mq");
+    box.innerHTML = `<div class="progress"><i id="mp"></i></div>` + pool.map(mcqHTML).join("") + `<div class="card hidden" id="mres"></div>`;
+    box.querySelectorAll(".card[data-i]").forEach(card => {
+      const q = pool[+card.dataset.i];
+      card.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
+        if (q.done) return; q.done = true;
+        const ok = +btn.dataset.k === q.a;
+        card.querySelectorAll(".opt").forEach(b => { b.disabled = true; if (+b.dataset.k === q.a) b.classList.add("right"); });
+        if (!ok) btn.classList.add("wrong");
+        const w = card.querySelector(".why"); w.innerHTML = `<b class="${ok?"ok":"no"}">${ok?"Correct.":"Not quite."}</b> ${q.w}`; w.classList.remove("hidden");
+        score += ok ? 1 : 0; answered++; $("#mp").style.width = (answered / pool.length * 100) + "%";
+        if (answered === pool.length) {
+          const r = $("#mres");
+          r.innerHTML = `<div class="score">${score} / ${pool.length}</div><p class="muted">${score >= 8 ? "Strong. Try another topic." : score >= 5 ? "Decent. Read the explanations you missed, then go again." : "Go back to the flashcards for this topic, then retry."}</p><button class="btn" id="again">New round</button>`;
+          r.classList.remove("hidden"); $("#again").onclick = () => $("#mgo").click(); r.scrollIntoView({behavior:"smooth"});
+        }
+      });
+    });
+  };
+}
+
+/* ================= TYPED ANSWER CARDS (blanks, commands, conversions) ================= */
+function blankHTML(b, i, label){
+  const parts = b.q.split("____");
+  return `<div class="card" data-b="${i}">
+    <span class="tag">${TOPICS[b.t]}</span>
+    <div class="row" style="gap:6px"><b>${i+1}.</b> ${parts[0]}<input class="blank" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="answer">${parts[1] || ""}</div>
+    <div class="why hidden"></div></div>`;
+}
+function checkBlank(card, b){
+  const inp = card.querySelector("input"), v = norm(inp.value), ok = b.a.some(x => norm(x) === v);
+  inp.classList.remove("ok","no"); inp.classList.add(ok ? "ok" : "no");
+  const w = card.querySelector(".why");
+  w.innerHTML = ok ? `<b class="ok">Correct.</b>${b.w ? " " + b.w : ""}` : `<b class="no">Answer:</b> <code>${esc(b.a[0])}</code>${b.w ? " · " + b.w : ""}`;
+  w.classList.remove("hidden");
+  return ok;
+}
+function cmdHTML(c, i){
+  return `<div class="card" data-c="${i}">
+    <span class="tag">${TOPICS[c.t]}</span>
+    <div><b>${i+1}.</b> ${c.q}</div>
+    <div class="row" style="margin-top:8px;gap:6px"><code style="background:none;font-weight:600">$</code><input class="blank" style="width:min(420px,80%)" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type the command"></div>
+    <div class="why hidden"></div></div>`;
+}
+function checkCmd(card, c){
+  const inp = card.querySelector("input"), v = normCmd(inp.value), ok = c.a.some(re => re.test(v));
+  inp.classList.remove("ok","no"); inp.classList.add(ok ? "ok" : "no");
+  const w = card.querySelector(".why");
+  w.innerHTML = ok ? `<b class="ok">Correct.</b> <code>${esc(c.s)}</code>` : `<b class="no">Answer:</b> <code>${esc(c.s)}</code>`;
+  w.classList.remove("hidden");
+  return ok;
+}
+function wireEnter(box, sel, pool, fn){
+  box.querySelectorAll(sel).forEach((card, idx, all) => {
+    const inp = card.querySelector("input");
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { fn(card, pool[idx]); const nx = all[idx+1]; if (nx) nx.querySelector("input").focus(); } });
+  });
+}
+
+/* ================= FILL IN THE BLANKS ================= */
+function blanks(){
+  app.innerHTML = `<div class="card"><h2>Fill in the blanks</h2><p class="lead">Type the missing command, option or word. Press Enter to check one, or Check all.</p>
+    <div class="row">${topicSelect("bt")}<button class="btn" id="bgo">Start</button></div></div><div id="bq"></div>`;
+  $("#bgo").onclick = () => {
+    const pool = shuffle(byTopic(BLANKS, +$("#bt").value)).slice(0, 10);
+    const box = $("#bq");
+    box.innerHTML = pool.map((b,i) => blankHTML(b,i)).join("") + `<div class="card"><div class="row"><button class="btn" id="bcheck">Check all</button><button class="btn ghost" id="bnew">New round</button></div><div id="bres" style="margin-top:12px"></div></div>`;
+    wireEnter(box, ".card[data-b]", pool, checkBlank);
+    $("#bcheck").onclick = () => { let s = 0; box.querySelectorAll(".card[data-b]").forEach(c => { s += checkBlank(c, pool[+c.dataset.b]) ? 1 : 0; }); $("#bres").innerHTML = `<div class="score">${s} / ${pool.length}</div>`; };
+    $("#bnew").onclick = () => $("#bgo").click();
+    box.querySelector("input").focus();
+  };
+}
+
+/* ================= COMMAND DRILL ================= */
+function cmd(){
+  app.innerHTML = `<div class="card"><h2>Command drill</h2><p class="lead">Read the task and type the full command, like in the terminal. Spaces are flexible; options must be right. Press Enter to check.</p>
+    <div class="row">${topicSelect("ct")}<button class="btn" id="cgo">Start</button></div></div><div id="cq"></div>`;
+  $("#cgo").onclick = () => {
+    const pool = shuffle(byTopic(CMD, +$("#ct").value)).slice(0, 10);
+    const box = $("#cq");
+    box.innerHTML = pool.map(cmdHTML).join("") + `<div class="card"><div class="row"><button class="btn" id="ccheck">Check all</button><button class="btn ghost" id="cnew">New round</button></div><div id="cres" style="margin-top:12px"></div></div>`;
+    wireEnter(box, ".card[data-c]", pool, checkCmd);
+    $("#ccheck").onclick = () => { let s = 0; box.querySelectorAll(".card[data-c]").forEach(c => { s += checkCmd(c, pool[+c.dataset.c]) ? 1 : 0; }); $("#cres").innerHTML = `<div class="score">${s} / ${pool.length}</div>`; };
+    $("#cnew").onclick = () => $("#cgo").click();
+    box.querySelector("input").focus();
+  };
+}
+
+/* ================= CONVERSIONS ================= */
+function conv(){
+  app.innerHTML = `<div class="card"><h2>Binary · Hex · chmod · Slack space</h2>
+    <p class="lead">Endless random questions. Type your answer and press Enter.</p>
+    <div class="row" style="gap:18px;font-size:14px">
+      <div><b>Binary</b> 128 64 32 16 8 4 2 1</div>
+      <div><b>Hex</b> A=10 B=11 C=12 D=13 E=14 F=15</div>
+      <div><b>chmod</b> r=4 w=2 x=1</div>
+    </div></div>
+    <div id="vbox"></div>
+    <div class="card"><span id="vscore" class="muted">0 correct · 0 tried</span></div>`;
+  let good = 0, tried = 0;
+  const next = () => {
+    const q = genConv();
+    $("#vbox").innerHTML = blankHTML({...q, q: q.q + " ____"}, 0).replace("<b>1.</b> ", "") + `<div class="row" style="margin:-6px 0 16px"><button class="btn" id="vchk">Check</button><button class="btn ghost" id="vnext">Next question</button></div>`;
+    const card = $("#vbox .card"), inp = card.querySelector("input");
+    let done = false;
+    const check = () => { if (done) { next(); return; } done = true; tried++; const v = inp.value.trim().toLowerCase().replace(/^0x/,"").replace(/^0+(?=\d)/,""); inp.value = inp.value; const ok = q.a.some(x => x.toLowerCase().replace(/^0+(?=\d)/,"") === v); if (ok) good++;
+      inp.classList.add(ok ? "ok" : "no"); const w = card.querySelector(".why"); w.innerHTML = `<b class="${ok?"ok":"no"}">${ok?"Correct.":"Answer: " + esc(q.a[0].toUpperCase())}</b> ${q.w}`; w.classList.remove("hidden");
+      $("#vscore").textContent = `${good} correct · ${tried} tried`; $("#vchk").textContent = "Next (Enter)"; };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+    $("#vchk").onclick = check; $("#vnext").onclick = next; inp.focus();
+  };
+  next();
+}
+
+/* ================= FLASHCARDS ================= */
+function flash(){
+  app.innerHTML = `<div class="card"><h2>Flashcards</h2><p class="lead">Tap the card to flip it. "Still learning" shows the answer first; those cards come back later in the round.</p>
+    <div class="row">${topicSelect("ft")}<button class="btn" id="fgo">Start</button></div></div><div id="fbox"></div>`;
+  $("#fgo").onclick = () => {
+    let deck = shuffle(byTopic(FLASH, +$("#ft").value)), known = 0, total = deck.length;
+    const box = $("#fbox");
+    const show = () => {
+      if (!deck.length) { box.innerHTML = `<div class="card"><div class="score">Done</div><p class="muted">You went through all ${total} cards.</p><button class="btn" id="fagain">Shuffle again</button></div>`; $("#fagain").onclick = () => $("#fgo").click(); return; }
+      const c = deck[0];
+      box.innerHTML = `<div class="progress"><i style="width:${known/total*100}%"></i></div>
+        <div class="flash" id="fc"><div class="inner">
+          <div class="face"><small>${TOPICS[c.t]}</small><code style="background:none;font-size:21px">${c.f}</code></div>
+          <div class="face back"><small>Answer</small><div>${c.b}</div></div>
+        </div></div>
+        <div class="row" style="margin-top:14px;justify-content:center">
+          <button class="btn ghost" id="fno">Still learning</button>
+          <button class="btn" id="fyes">I know it</button>
+        </div>
+        <p class="muted" style="text-align:center;font-size:13px">${known} of ${total} known · ${deck.length} left</p>`;
+      $("#fc").onclick = () => $("#fc").classList.toggle("flip");
+      $("#fyes").onclick = () => { deck.shift(); known++; show(); };
+      $("#fno").onclick = () => {
+        const btn = $("#fno");
+        if (btn.dataset.step !== "next") { $("#fc").classList.add("flip"); btn.dataset.step = "next"; btn.textContent = "Got it, next card"; btn.classList.remove("ghost"); $("#fyes").classList.add("hidden"); return; }
+        const x = deck.shift(); deck.splice(Math.min(3, deck.length), 0, x); show();
+      };
+    };
+    show();
+  };
+}
+
+/* ================= MOCK TEST ================= */
+function mock(){
+  app.innerHTML = `<div class="card"><h2>Mock test</h2><p class="lead">15 multiple choice + 8 fill in the blanks + 6 commands + 4 conversions, all random, 45-minute timer. Answers appear only when you submit.</p>
+    <button class="btn" id="tgo">Start mock test</button></div><div id="tbox"></div>`;
+  $("#tgo").onclick = () => {
+    const qs = shuffle(MCQ).slice(0, 15).map(q => ({...q, order: shuffle([...q.o.keys()]), pick:null}));
+    const bs = shuffle(BLANKS).slice(0, 8);
+    const cs = shuffle(CMD).slice(0, 6);
+    const vs = [0,1,2,3].map(() => { const g = genConv(); return {...g, q: g.q + " ____"}; });
+    let left = 45 * 60;
+    const box = $("#tbox");
+    box.innerHTML = `<div class="card row" style="justify-content:space-between;position:sticky;top:112px;z-index:2"><b>Mock test</b><span class="timer" id="tt">45:00</span></div>
+      <h3>Part 1 · Multiple choice</h3>
+      ${qs.map((q,i) => `<div class="card" data-t="${i}"><span class="tag">${TOPICS[q.t]}</span><div><b>${i+1}.</b> ${q.q}</div>
+        <div class="opts">${q.order.map(k => `<button class="opt" data-k="${k}">${q.o[k]}</button>`).join("")}</div><div class="why hidden"></div></div>`).join("")}
+      <h3>Part 2 · Fill in the blanks</h3>
+      <div id="tb">${bs.map((b,i) => blankHTML(b,i)).join("")}</div>
+      <h3>Part 3 · Commands</h3>
+      <div id="tc">${cs.map(cmdHTML).join("")}</div>
+      <h3>Part 4 · Conversions</h3>
+      <div id="tv">${vs.map((v,i) => blankHTML(v,i)).join("")}</div>
+      <div class="card"><button class="btn" id="tsub">Submit test</button></div>
+      <div class="card hidden" id="tres"></div>`;
+    box.querySelectorAll(".card[data-t]").forEach(card => {
+      const q = qs[+card.dataset.t];
+      card.querySelectorAll(".opt").forEach(b => b.onclick = () => { if (q.locked) return; card.querySelectorAll(".opt").forEach(x => x.style.borderColor = ""); b.style.borderColor = "var(--accent)"; q.pick = +b.dataset.k; });
+    });
+    const tick = () => { left--; const m = Math.floor(left/60), s = left % 60; const el = $("#tt"); if (el) el.textContent = `${m}:${String(s).padStart(2,"0")}`; if (left <= 0) submit(); };
+    timerHandle = setInterval(tick, 1000);
+    const submit = () => {
+      stopTimer(); $("#tsub").disabled = true;
+      const stats = {}; const add = (t, ok) => { stats[t] = stats[t] || [0,0]; stats[t][1]++; if (ok) stats[t][0]++; };
+      let mc = 0;
+      box.querySelectorAll(".card[data-t]").forEach(card => {
+        const q = qs[+card.dataset.t]; q.locked = true; const ok = q.pick === q.a; if (ok) mc++; add(q.t, ok);
+        card.querySelectorAll(".opt").forEach(b => { b.disabled = true; b.style.borderColor = ""; const k = +b.dataset.k; if (k === q.a) b.classList.add("right"); else if (k === q.pick) b.classList.add("wrong"); });
+        const w = card.querySelector(".why"); w.innerHTML = `<b class="${ok?"ok":"no"}">${ok?"Correct.":q.pick===null?"No answer.":"Not quite."}</b> ${q.w}`; w.classList.remove("hidden");
+      });
+      let bl = 0; $("#tb").querySelectorAll(".card").forEach((c,i) => { const ok = checkBlank(c, bs[i]); if (ok) bl++; add(bs[i].t, ok); });
+      let cm = 0; $("#tc").querySelectorAll(".card").forEach((c,i) => { const ok = checkCmd(c, cs[i]); if (ok) cm++; add(cs[i].t, ok); });
+      let cv = 0; $("#tv").querySelectorAll(".card").forEach((c,i) => {
+        const inp = c.querySelector("input"), v = inp.value.trim().toLowerCase().replace(/^0x/,"").replace(/^0+(?=\d)/,""), ok = vs[i].a.some(x => x.toLowerCase().replace(/^0+(?=\d)/,"") === v);
+        inp.classList.add(ok ? "ok" : "no"); const w = c.querySelector(".why"); w.innerHTML = `<b class="${ok?"ok":"no"}">${ok?"Correct.":"Answer: " + esc(vs[i].a[0].toUpperCase())}</b> ${vs[i].w}`; w.classList.remove("hidden");
+        if (ok) cv++; add(vs[i].t, ok);
+      });
+      const total = mc + bl + cm + cv, max = qs.length + bs.length + cs.length + vs.length, pct = Math.round(total / max * 100);
+      const best = load("best", 0); if (pct > best) store("best", pct);
+      const weak = Object.keys(stats).filter(t => stats[t][0]/stats[t][1] < 0.7).sort((a,b) => stats[a][0]/stats[a][1] - stats[b][0]/stats[b][1]);
+      const r = $("#tres");
+      r.innerHTML = `<div class="score">${pct}%</div>
+        <p>Multiple choice <b>${mc}/${qs.length}</b> · Blanks <b>${bl}/${bs.length}</b> · Commands <b>${cm}/${cs.length}</b> · Conversions <b>${cv}/${vs.length}</b></p>
+        <h3 style="margin-top:16px">Per topic</h3>
+        <ul class="checks">${Object.keys(stats).sort((a,b)=>a-b).map(t => { const [g,n] = stats[t], p = Math.round(g/n*100); return `<li><span class="pill" style="color:var(${p>=70?"--good":"--bad"})">${p>=70?"✓":"✗"}</span>${TOPICS[t]}: <b>${g}/${n}</b> (${p}%)</li>`; }).join("")}</ul>
+        <p class="muted">${weak.length ? `Practise next: <b>${weak.map(t => TOPICS[t]).join(", ")}</b>.` : "No weak topic this round."}</p>
+        <p class="muted" style="font-size:13px">Scroll up to see the right answers and explanations.</p>
+        <button class="btn" id="tagain">New random mock test</button>`;
+      r.classList.remove("hidden"); $("#tagain").onclick = () => { go("mock"); $("#tgo").click(); };
+      r.scrollIntoView({behavior:"smooth"});
+    };
+    $("#tsub").onclick = submit;
+  };
+}
+
+/* ================= START ================= */
+const start = (location.hash || "").replace("#","");
+go(VIEWS[start] ? start : "home");
+window.addEventListener("hashchange", () => { const v = location.hash.replace("#",""); if (VIEWS[v]) go(v); });
+</script>
+
+</body>
+</html>
