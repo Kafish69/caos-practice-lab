@@ -82,7 +82,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0}
 <header>
   <div class="wrap">
     <div class="top">
-      <div><div class="brand">CAOS <span>Practice Lab</span></div><div class="sub">Computer Architectures &amp; Operating Systems · Linux commands &amp; theory</div></div>
+      <div><div class="brand">CAOS <span>Practice Lab</span></div><div class="sub">Computer Architectures &amp; Operating Systems · weeks 1–5 · Linux, hardware &amp; theory</div></div>
     </div>
     <nav id="nav">
       <button data-v="home" class="on">Home</button>
@@ -96,11 +96,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0}
   </div>
 </header>
 <main class="wrap" id="app"></main>
-<footer>Made from the CAOS Linux command reference and theory notes. Good luck on the exam.</footer>
+<footer>Made from the CAOS lecture slides (weeks 1.1–5.2) and the Linux command reference. Good luck on the exam.</footer>
 
 <script>
 /* ================= DATA ================= */
-const TOPICS = ["All","Navigation & files","Viewing & searching","Inodes & links","Permissions","Users & groups","Forensics","Docker & other","Theory"];
+const TOPICS = ["All","Navigation & files","Viewing & searching","Inodes & links","Permissions","Users & groups","Forensics","Docker, WSL & other","Theory"];
 
 const MCQ = [
 // 1 navigation & files
@@ -349,6 +349,330 @@ const CMD = [
 {t:7,q:"Show the commands you typed before.",a:[/^history$/],s:"history"}
 ];
 
+/* ================= FROM THE LECTURE SLIDES (weeks 1.1 – 5.2) ================= */
+TOPICS.push("Virtualization", "Shell & text tools", "Hardware & architecture", "CPU, memory & storage", "File systems & RAID", "Security & BIOS");
+// indexes: 9 Virtualization · 10 Shell & text tools · 11 Hardware & architecture · 12 CPU, memory & storage · 13 File systems & RAID · 14 Security & BIOS
+
+MCQ.push(
+// 9 virtualization
+{t:9,q:"What is the software layer that creates and manages virtual machines?",o:["Kernel","Hypervisor","Container engine","BIOS"],a:1,w:"The hypervisor sits between the hardware and the guest OSes and gives each VM its resources."},
+{t:9,q:"A Type 1 hypervisor…",o:["runs on top of Windows or macOS","runs directly on the hardware (bare metal)","is a container engine","only runs Linux"],a:1,w:"Type 1 = native/bare metal, mostly on servers: VMware ESXi, Hyper-V Server, Xen."},
+{t:9,q:"Which is a Type 2 (hosted) hypervisor?",o:["VMware ESXi","Citrix Xen Server","VMware Workstation / VirtualBox","Hyper-V Server"],a:2,w:"Type 2 runs on an installed host OS: VMware Workstation, Fusion, VirtualBox."},
+{t:9,q:"Host OS vs Guest OS:",o:["Guest = the OS the computer boots; host = the VM","Host = the OS the computer boots; guest = the OS inside the VM","They are the same","Host = Linux, guest = Windows"],a:1,w:"The guest OS runs inside a VM on top of the host OS."},
+{t:9,q:"Which VMware file is the virtual hard disk?",o:[".vmx",".log",".vmdk",".vmem"],a:2,w:".vmdk = virtual disk. .vmx = settings (text). .vmem = memory (only while running/suspended). .log = troubleshooting."},
+{t:9,q:"Which VMware file holds the VM's settings?",o:[".vmx",".vmdk",".vmem",".iso"],a:0,w:".vmx is a text configuration file."},
+{t:9,q:"You only see the .vmem file when…",o:["the VM is deleted","the VM is running or suspended","the VM is a clone","always"],a:1,w:".vmem stores the memory of a running VM."},
+{t:9,q:"Which network mode is the default (and used in the labs)?",o:["Bridged","NAT","Host only","None"],a:1,w:"NAT: the VM uses a private network and NAT to reach the internet. Bridged = on the host's network. Host only = separate private network."},
+{t:9,q:"In Bridged mode, the VM…",o:["has no network","uses the network of the host, like a separate device on it","uses a private NAT network","can only talk to the host"],a:1,w:"Bridged puts the VM directly on the host's network."},
+{t:9,q:"A linked clone…",o:["works without the original VM","needs the original VM, is faster to create but slower to use","is an exact independent copy","is a snapshot"],a:1,w:"Full clone = independent copy. Linked clone = depends on the original."},
+{t:9,q:"What is a snapshot?",o:["A screenshot of the VM","A saved state of the VM you can revert to","A full copy of the VM","A backup on another disk"],a:1,w:"Snapshot = current state; revert when things break."},
+{t:9,q:"What does VMware Tools / open-vm-tools do?",o:["Creates VMs","Improves the VM's performance and integration with the host","Encrypts the VM","Converts VMs to containers"],a:1,w:"Installed INSIDE the VM. open-vm-tools is the open-source version for Linux: sudo apt-get install open-vm-tools."},
+{t:9,q:"Which virtualization type unifies distributed data sources into one logical view?",o:["Storage virtualization","Data virtualization","Desktop virtualization","NFV"],a:1,w:"Data virtualization = data federation."},
+{t:9,q:"NFV (Network Functions Virtualization) is mainly used in…",o:["Gaming","Telecom: routing, switching as software","Desktop PCs","Storage"],a:1,w:"It virtualizes network services so less special hardware is needed."},
+{t:9,q:"Why is VM isolation useful?",o:["VMs share one kernel","If one VM crashes or is hacked, the others are unaffected","It makes VMs faster","It removes the need for a hypervisor"],a:1,w:"Each VM is sandboxed."},
+{t:9,q:"Which is NOT a way to install an OS?",o:["Single OS","Dual/multi boot","In a VM with a hypervisor","Inside the BIOS"],a:3,w:"The 3 options: single OS, dual/multi boot, or as an extra OS with virtualization."},
+// 7 docker (new)
+{t:7,q:"What is a Docker image?",o:["A running container","A package with everything needed to run an app (files, dependencies, config)","A screenshot","A VM disk"],a:1,w:"A container is a runnable instance of an image."},
+{t:7,q:"Container vs image:",o:["Same thing","A container is a running instance of an image","An image is a running container","Images run on VMs only"],a:1,w:"Image = template. Container = it running."},
+{t:7,q:"Where are Docker images stored and shared?",o:["In a registry like Docker Hub","In /etc","In the BIOS","In a hypervisor"],a:0,w:"Registries: Docker Hub, ACR, ECR, GitLab, Quay. pull = download, push = upload."},
+{t:7,q:"Containers vs VMs:",o:["Containers include a full OS","Containers share the host OS kernel and are lighter","VMs share the kernel","Containers need a Type 1 hypervisor"],a:1,w:"Containers virtualize at the OS layer; the image does not include an OS kernel."},
+{t:7,q:"Which is an open-source Docker alternative with rootless, daemonless containers?",o:["runC","Podman","Kubernetes","WSL"],a:1,w:"Podman's commands are similar to Docker."},
+{t:7,q:"Which command lists the images on your system?",o:["docker ps","docker images","docker list","docker volume ls"],a:1,w:"docker images. Remove one with docker rmi."},
+{t:7,q:"Which command opens a shell in a RUNNING container?",o:["docker run -it name","docker exec -it name /bin/bash","docker start name","docker attach -s"],a:1,w:"docker exec runs a command in a running container."},
+{t:7,q:"What does <code>docker run -p 8080:80 nginx</code> do?",o:["Runs 8080 containers","Maps host port 8080 to container port 80","Limits memory","Pulls version 8080"],a:1,w:"-p host_port:container_port."},
+{t:7,q:"What does <code>docker run -it -v ~/v1:/v1 image</code> do?",o:["Sets the version","Shares the host folder ~/v1 with the container as /v1","Verbose mode","Creates a VM"],a:1,w:"-v maps a host folder (volume) into the container."},
+{t:7,q:"What is Docker Compose for?",o:["Writing Dockerfiles","Defining and running multi-container apps from one YAML file","Compressing images","Making VMs"],a:1,w:"docker compose up (-d for background), docker compose stop."},
+{t:7,q:"What is WSL?",o:["A Linux distribution","Windows Subsystem for Linux: run Linux on Windows","A Docker registry","A hypervisor type"],a:1,w:"Windows files are reachable from Linux via /mnt/c."},
+{t:7,q:"What are Docker volumes for?",o:["Sound","Keeping (persisting) data from containers","Networking","Logging"],a:1,w:"docker volume create / ls / rm / inspect."},
+// 10 shell & text tools
+{t:10,q:"In <code>usermod -L user01</code>, what is <code>-L</code>?",o:["The command","An option","An argument","A pipe"],a:1,w:"command [options] [arguments]: usermod = command, -L = option, user01 = argument."},
+{t:10,q:"What is the GNU part of GNU/Linux?",o:["The kernel","Free software with open-source versions of UNIX commands","The desktop","The bootloader"],a:1,w:"Linux = the kernel, GNU = the free tools. Together: the OS."},
+{t:10,q:"Which is a Linux GUI (desktop environment)?",o:["bash","ksh","GNOME","PowerShell"],a:2,w:"GNOME and KDE are GUIs; bash, sh, ksh are shells (CLI)."},
+{t:10,q:"Which command searches the manual page names and descriptions?",o:["man","apropos","info","help"],a:1,w:"apropos keyword. man ls shows the full manual, ls --help a short help."},
+{t:10,q:"How do you run two commands on one line, one after the other?",o:["cmd1 | cmd2","cmd1 ; cmd2","cmd1 > cmd2","cmd1 + cmd2"],a:1,w:"; separates commands. | sends output into the next one."},
+{t:10,q:"What does <code>!26</code> do?",o:["Deletes line 26","Runs command number 26 from history","Shows 26 lines","Negates 26"],a:1,w:"!number repeats that history entry. !ls repeats the last command starting with ls."},
+{t:10,q:"Which shortcut searches your command history?",o:["Ctrl+A","Ctrl+E","Ctrl+R","Ctrl+U"],a:2,w:"Ctrl+A start of line, Ctrl+E end, Ctrl+U clear to start, Ctrl+K clear to end, Ctrl+R search history."},
+{t:10,q:"How do you stop a running command?",o:["Ctrl+Z","Ctrl+C","Ctrl+Q","Esc"],a:1,w:"Ctrl+C."},
+{t:10,q:"The wildcard <code>?</code> means…",o:["any number of characters","exactly one character","zero or one file","a hidden file"],a:1,w:"* = any number, ? = exactly one, [abc] = one of these, [^c] = not c."},
+{t:10,q:"Which files does <code>ls -l D[aop]*</code> show?",o:["Files ending in a, o or p","Files starting with D, then a, o or p, then anything","Only Daop","Hidden files"],a:1,w:"[aop] matches one character from the set."},
+{t:10,q:"What is globbing?",o:["Compressing files","The shell replacing wildcards with matching file names before running the command","Searching with grep","A type of link"],a:1,w:"Wildcard expansion happens first, then the command runs."},
+{t:10,q:"What does <code>sudo !!</code> do?",o:["Runs the last command again with sudo","Disables sudo","Shows sudo history","Becomes root forever"],a:0,w:"!! = the previous command."},
+{t:10,q:"Which command removes repeated (duplicate) adjacent lines?",o:["sort","uniq","cut","diff"],a:1,w:"uniq filters repeated lines (works on adjacent lines, so often after sort)."},
+{t:10,q:"Which command extracts columns using a delimiter?",o:["cut","sort","paste","tail"],a:0,w:"cut -d \" \" -f 2 file → 2nd field, space as delimiter."},
+{t:10,q:"What does <code>awk '{print $1, $4}' myFile</code> print?",o:["Lines 1 and 4","The 1st and 4th field (column) of every line","$1 and $4 literally","Nothing"],a:1,w:"awk works column by column with $1, $2…"},
+{t:10,q:"Which command compares two files and shows the differences?",o:["cmp","diff","uniq","join"],a:1,w:"diff file1 file2."},
+{t:10,q:"sed is…",o:["a stream editor for text transformations","a disk tool","a sort tool","a shell"],a:0,w:"sed = stream editor, non-interactive."},
+{t:10,q:"What does <code>ls -l *.pdf | wc -l</code> give you?",o:["The size of all PDFs","The number of PDF files (lines)","The PDF names","An error"],a:1,w:"ls lists one PDF per line, wc -l counts the lines."},
+{t:10,q:"What happens with anything written to <code>/dev/null</code>?",o:["It is saved","It is discarded","It is printed twice","It becomes an error"],a:1,w:"/dev/null is the 'void'."},
+{t:10,q:"What does <code>grep -r 'hello' /sys 2&gt; /dev/null</code> do?",o:["Hides the normal output","Hides the error messages","Saves errors to a file","Deletes /sys"],a:1,w:"2> redirects stderr (errors). 1 = stdout, 2 = stderr."},
+{t:10,q:"Which redirection appends normal output to a file?",o:[">","2>",">>","|"],a:2,w:"> overwrite, >> append, 2> errors."},
+{t:10,q:"What does <code>grep ^te file</code> match?",o:["Lines ending with te","Lines starting with te","Lines containing ^te","All lines"],a:1,w:"^ = start of line, $ = end of line, . = any character."},
+{t:10,q:"Which grep pattern matches lines ending with x?",o:["^x","x$",".x","x*"],a:1,w:"$ means end of line."},
+{t:10,q:"In regex, <code>\\d</code> matches…",o:["any letter","any digit 0–9","a dot","a space"],a:1,w:"\\d digit, \\w word char, \\s whitespace; capitals mean NOT."},
+{t:10,q:"In regex, what does <code>+</code> mean?",o:["0 or more","1 or more","0 or 1","exactly 1"],a:1,w:"* = 0 or more, + = 1 or more, ? = 0 or 1, {3} = exactly 3, {2,4} = 2 to 4."},
+{t:10,q:"Which command finds files larger than 6 MB under /usr?",o:["find /usr -size +6M","grep -s 6M /usr","du -6M /usr","ls -size 6M"],a:0,w:"find /usr -type f -size +6M"},
+{t:10,q:"Which find option limits how deep it searches?",o:["-depth-only","-maxdepth","-level","-r"],a:1,w:"sudo find / -maxdepth 3 -name passwd"},
+{t:10,q:"vim vs nano:",o:["Both are text editors you can use from the shell","vim is a file manager","nano is a shell","Neither edits files"],a:0,w:"vim (improved vi) has modes: command, extended command, edit, visual."},
+{t:10,q:"How do you remove the alias <code>test</code>?",o:["alias -d test","unalias test","rm test","delete alias test"],a:1,w:"alias name=\"value\" creates (no spaces around =), unalias removes."},
+{t:10,q:"With <code>cp</code>, <code>-i</code> means…",o:["ignore","interactive: ask before overwriting","inode","install"],a:1,w:"-v verbose, -i interactive, -n no clobber (don't overwrite), -r recursive."},
+// 11 hardware & architecture
+{t:11,q:"Hardware vs software:",o:["Software is physical","Hardware = physical parts, software = programs that run on them","Same thing","The OS is hardware"],a:1,w:"Software runs on hardware."},
+{t:11,q:"The two types of software are…",o:["Hardware and firmware","Applications and system software (the OS)","Drivers and BIOS","Linux and Windows"],a:1,w:"System software = the OS that makes running applications possible."},
+{t:11,q:"Which part is called the brain of the computer?",o:["RAM","CPU","PSU","Motherboard"],a:1,w:"The CPU processes data; every action goes through it."},
+{t:11,q:"What connects all components together?",o:["CPU","Motherboard","RAM","Power supply"],a:1,w:"The motherboard is the backbone."},
+{t:11,q:"Von Neumann architecture stores…",o:["instructions and data in separate memories","instructions and data in the same memory","only data","only instructions"],a:1,w:"Same memory and same bus → the Von Neumann bottleneck."},
+{t:11,q:"What is the Von Neumann bottleneck?",o:["Too little RAM","The CPU can't fetch instructions and read/write data at the same time over the shared bus","Overheating","Slow disks"],a:1,w:"Instructions run one at a time, sequentially."},
+{t:11,q:"Harvard architecture has…",o:["one shared bus","separate memory and buses for instructions and data","no memory","no CPU"],a:1,w:"So the CPU can read instructions and data at the same time. Used in DSPs and microcontrollers."},
+{t:11,q:"Modern Intel x86 and ARM processors use…",o:["Pure Von Neumann","Pure Harvard","Modified Harvard","No architecture"],a:2,w:"Modified Harvard balances performance and ease of implementation."},
+{t:11,q:"RISC means…",o:["Reduced Instruction Set Computer: simple instructions, low power","Random Instruction System Computer","Really Intelligent System Core","Complex instructions"],a:0,w:"RISC: ARM, Apple M, Snapdragon, RISC-V. CISC: Intel x86, AMD."},
+{t:11,q:"Which is a CISC processor?",o:["ARM","Apple M1","Intel x86","Qualcomm Snapdragon"],a:2,w:"x86 (Intel, AMD) = CISC. Most phones = ARM = RISC."},
+{t:11,q:"Which uses less power, usually?",o:["CISC","RISC","Same","Depends on RAM"],a:1,w:"RISC's simpler design → lower power, used in phones and IoT."},
+{t:11,q:"Why does it matter if a device is x86 (AMD64) or ARM?",o:["Colour of the case","Software is compiled for one architecture and won't run on the other","Only for games","It doesn't matter"],a:1,w:"Software is built per architecture."},
+{t:11,q:"Computer Architecture vs Computer Organization:",o:["Architecture = HOW, organization = WHAT","Architecture = WHAT the computer does (ISA), organization = HOW (microarchitecture)","Same","Organization comes first"],a:1,w:"Architecture is decided first; organization realizes it."},
+{t:11,q:"What does an assembler do?",o:["Builds hardware","Translates assembly to machine code (0s and 1s)","Runs Python","Makes VMs"],a:1,w:"Assembly is machine-dependent; high-level languages are machine-independent."},
+{t:11,q:"What is a driver?",o:["A user","Software that lets the OS and a device communicate","A type of CPU","A cable"],a:1,w:"Function driver talks to the device; filter drivers do extra processing."},
+{t:11,q:"What is the Turing machine?",o:["The first PC","A theoretical model that can simulate the logic of any computer","A type of CPU","An encryption machine"],a:1,w:"Alan Turing, 1936. A Turing-complete language can express any computable task."},
+{t:11,q:"Which stores data temporarily?",o:["SSD","HDD","RAM","DVD"],a:2,w:"RAM = temporary (lost without power). Disk/SSD = permanent."},
+{t:11,q:"How many values can one byte represent?",o:["8","128","255","256"],a:3,w:"8 bits → 2⁸ = 256 combinations (0–255)."},
+{t:11,q:"A transistor or capacitor has how many states?",o:["1","2","8","10"],a:1,w:"On/off, charged/discharged → 0 or 1 = a bit."},
+{t:11,q:"What is the LSB?",o:["Left-most bit","Right-most bit (least significant)","The largest byte","A bus"],a:1,w:"LSB = right-most, MSB = left-most."},
+// 12 CPU, memory & storage
+{t:12,q:"The 4 phases of the instruction cycle, in order:",o:["Decode, fetch, store, execute","Fetch, decode, execute, store","Execute, fetch, decode, store","Store, fetch, execute, decode"],a:1,w:"Fetch (get from memory) → decode → execute → store the result."},
+{t:12,q:"Which CPU part does arithmetic and logic (AND, OR, NOT)?",o:["Control unit","ALU","Registers","FPU"],a:1,w:"ALU = Arithmetic Logic Unit. FPU = floating point. Control unit controls execution."},
+{t:12,q:"Which register holds the address of the NEXT instruction?",o:["Accumulator","Program counter","Stack pointer","Instruction register"],a:1,w:"Instruction register holds the current one; stack pointer the top of the stack (LIFO)."},
+{t:12,q:"The stack is…",o:["FIFO","LIFO: last in, first out","random","a disk"],a:1,w:"The stack pointer points to its top."},
+{t:12,q:"Word size of a 64-bit CPU means…",o:["64 cores","It can handle 64 bits in one operation","64 GB RAM","64 GHz"],a:1,w:"Width of the general purpose registers."},
+{t:12,q:"Multicore vs multiprocessing:",o:["Same thing","Multicore = several cores on one chip (1 socket); multiprocessing = several CPUs (several sockets)","Multiprocessing is cheaper","Multicore needs more sockets"],a:1,w:"Multiprocessing is mostly servers."},
+{t:12,q:"How does a single-core CPU multitask?",o:["Runs everything at the same time","Context switching: each process gets a short slice of time","It can't","Hyperthreading only"],a:1,w:"It switches so fast it seems simultaneous. Multicore runs truly in parallel."},
+{t:12,q:"A CPU with 4 cores and hyperthreading shows the OS…",o:["4 logical cores","8 logical cores","2 logical cores","16 logical cores"],a:1,w:"Hyperthreading: each physical core runs 2 threads → 4 × 2 = 8."},
+{t:12,q:"An instruction consists of…",o:["an opcode and 0 or more operands","only data","a register and a bus","a driver"],a:0,w:"Opcode = what to do, operands = what it works on."},
+{t:12,q:"DDR4-2400 is also called…",o:["PC4-2400","PC4-19200","PC4-300","PC2400"],a:1,w:"MB/s = 8 × MT/s → 8 × 2400 = 19200."},
+{t:12,q:"In <code>DDR5-8800</code>, 8800 is…",o:["MB/s","MT/s (transfer speed)","MHz × 2","GB"],a:1,w:"DDRx-xxx = MT/s, PCx-yyy = MB/s."},
+{t:12,q:"Dual channel memory…",o:["exactly doubles speed in practice","gives more lines to the CPU; in tests only a limited speed gain","uses one module","is only for servers"],a:1,w:"Use modules of the same type."},
+{t:12,q:"Primary memory (RAM) vs secondary (SSD/HDD):",o:["RAM is slower and cheaper","RAM is faster, more expensive and loses data without power","Same","SSD is primary"],a:1,w:"RAM = primary, storage = secondary."},
+{t:12,q:"An SSD stores data in…",o:["spinning platters","NAND flash cells","RAM only","magnetic tape"],a:1,w:"HDD = spinning magnetic platters with read/write heads."},
+{t:12,q:"What does TRIM do on an SSD?",o:["Shrinks files","Resets blocks with deleted data so writing stays fast","Defragments","Encrypts"],a:1,w:"SSDs can only write to empty/erased blocks."},
+{t:12,q:"Which is a DISADVANTAGE of SSDs?",o:["Noisy","Limited number of program/erase (P/E) cycles","Slow boot","Shock sensitive"],a:1,w:"Also lower capacity and higher cost."},
+{t:12,q:"A drive rated 365 TBW with 5 years warranty allows about…",o:["2 GB/day","20 GB/day","200 GB/day","2 TB/day"],a:2,w:"365 TB ÷ (5 × 365 days) = 0.2 TB = 200 GB per day."},
+{t:12,q:"A 150 KB file on 4 KB clusters needs how many clusters?",o:["37","37.5","38","40"],a:2,w:"150 / 4 = 37.5 → round up to 38 clusters = 152 KB → 2 KB slack."},
+{t:12,q:"Default NTFS cluster size?",o:["512 bytes","4 KB","64 KB","1 MB"],a:1,w:"Min 512 B, default 4 KB, max 64 KB."},
+{t:12,q:"4 GB of RAM is really…",o:["4000 MB","4 GiB = 4096 MiB","4 TB","3.7 GB"],a:1,w:"RAM uses binary units. A 1 TB disk shows as 931 GiB in Windows."},
+// 13 file systems & RAID
+{t:13,q:"Default file system of Windows hard drives?",o:["FAT32","exFAT","NTFS","ext4"],a:2,w:"FAT/FAT32/exFAT are mostly for removable drives."},
+{t:13,q:"Max file size on FAT32?",o:["2 GB","4 GB","2 TB","256 TB"],a:1,w:"FAT32: files up to 4 GB. NTFS: much larger, plus permissions and encryption."},
+{t:13,q:"Which file system do Ubuntu and most distributions use?",o:["NTFS","FAT32","ext4","ZFS"],a:2,w:"ext4 is a journaling file system. XFS is default in RHEL."},
+{t:13,q:"Main advantage of a journaling file system?",o:["Faster writes","Damaged files can be recovered quickly","Smaller disks","No partitions"],a:1,w:"Disadvantage: more read/write actions."},
+{t:13,q:"Which package lets Linux mount NTFS disks?",o:["ntfs-3g","ext4-tools","mountfs","winfs"],a:0,w:"ntfs-3g."},
+{t:13,q:"Before a partition can be used, it must be…",o:["formatted","mounted in Windows","encrypted","compressed"],a:0,w:"Partition → format → (in Linux) mount."},
+{t:13,q:"<code>/usr/share/dict/words</code> is a…",o:["relative path","absolute path","link","wildcard"],a:1,w:"Absolute = from /. Relative = from where you are, e.g. dict/words."},
+{t:13,q:"Which command shows free disk space per file system?",o:["du","df","ls -s","free"],a:1,w:"df = disk free. du = disk usage of folders."},
+{t:13,q:"Which command shows how much space folders use?",o:["df","du","stat","fdisk"],a:1,w:"du ~ shows the size of your home directory."},
+{t:13,q:"How do you detach a mounted device?",o:["unmount","umount","eject -m","rm /mnt"],a:1,w:"umount (no 'n'!)."},
+{t:13,q:"In a FAT file system, what does the File Allocation Table store?",o:["File contents","For each cluster: is it used, and which cluster comes next (cluster chains)","Passwords","Permissions"],a:1,w:"File names and data are elsewhere in the file system."},
+{t:13,q:"Why does The Sleuth Kit calculate pseudo-inode numbers on FAT?",o:["FAT has no real inodes","To encrypt files","For speed","FAT has too many inodes"],a:0,w:"FAT only uses 32-byte directory entries."},
+{t:13,q:"When a file is deleted, what is actually removed?",o:["The data","Only the reference in the file system","Everything, permanently","The partition"],a:1,w:"That's why fls/icat can recover it if not overwritten."},
+{t:13,q:"A hard link's reference counter reaches 0. What happens?",o:["Nothing","The file is deleted","The link becomes soft","Error"],a:1,w:"Each deleted hard link lowers the counter by 1."},
+{t:13,q:"A soft link whose target was moved is called…",o:["an orphan","a hard link","a clone","a mount"],a:0,w:"Hard links keep working after a rename/move; soft links break."},
+{t:13,q:"Can a hard link point to another partition?",o:["Yes","No, only on the same partition and file system","Only with sudo","Only on NTFS"],a:1,w:"Soft links can."},
+{t:13,q:"RAID 0 is…",o:["mirroring","striping: faster, but no data protection","striping with parity","4 disks minimum"],a:1,w:"RAID 1 = mirroring, RAID 5 = striping + distributed parity (≥3 disks), RAID 6 = 2 parities (≥4 disks)."},
+{t:13,q:"Which RAID mirrors disk 1 onto disk 2?",o:["RAID 0","RAID 1","RAID 5","RAID 6"],a:1,w:"If disk 1 fails, disk 2 has a copy."},
+{t:13,q:"Minimum disks for RAID 5?",o:["2","3","4","5"],a:1,w:"RAID 5 survives 1 failed disk."},
+{t:13,q:"How many failed disks can RAID 6 survive?",o:["0","1","2","3"],a:2,w:"Two parity blocks, at least 4 disks."},
+{t:13,q:"RAID 10 is…",o:["10 disks","RAID 1 + RAID 0 combined","RAID 5 twice","no RAID"],a:1,w:"Mirroring plus striping."},
+// 14 security & BIOS
+{t:14,q:"What does the BIOS/UEFI do first when you power on?",o:["Loads Windows","POST: tests the hardware, then hands over to the bootloader","Formats the disk","Runs drivers"],a:1,w:"POST = Power On Self Test. Bootloader in Windows 11 = BOOTMGR."},
+{t:14,q:"UEFI vs legacy BIOS:",o:["UEFI is older","UEFI is newer, more graphical and supports disks over 2 TB","Same","BIOS supports bigger disks"],a:1,w:"Most computers have both."},
+{t:14,q:"Which keys usually open the BIOS setup?",o:["Ctrl+Alt+Del","DEL, F1 or F2","Esc only","Windows key"],a:1,w:"Press during start-up, before the OS loads."},
+{t:14,q:"The boot order setting decides…",o:["which user logs in","which device the computer boots from first","CPU speed","fan speed"],a:1,w:"SSD, HDD, DVD, USB…"},
+{t:14,q:"Random BSODs and beep codes at POST often point to…",o:["Memory or motherboard/CPU","The keyboard","The monitor","Wi-Fi"],a:0,w:"Use Memory Diagnostics, swap modules, check for blown capacitors."},
+{t:14,q:"Which technology shows hard disk health statistics?",o:["TRIM","S.M.A.R.T.","RAID","POST"],a:1,w:"Use chkdsk/scandisk for disk errors."},
+{t:14,q:"A low-level user gains root access through a bug. This is…",o:["Injection","Privilege escalation","Malware","Insecure configuration"],a:1,w:"Fix most OS vulnerabilities by updating."},
+{t:14,q:"Default admin/admin credentials left on a system is…",o:["Unpatched software","Insecure configuration","Injection flaw","A trojan"],a:1,w:"Weak defaults and unnecessary services make attacks easier."},
+{t:14,q:"Why are passwords salted?",o:["To make them shorter","Random characters added before hashing so rainbow tables don't work","To encrypt the disk","To speed up login"],a:1,w:"Hashes are stored in /etc/shadow."},
+{t:14,q:"In /etc/passwd, what does the <code>x</code> in the 2nd field mean?",o:["Account locked","The password is stored in /etc/shadow","No password","Execute permission"],a:1,w:"Fields: username:x:UID:GID:comment:home:shell"},
+{t:14,q:"Which UID does root have?",o:["1","0","1000","500"],a:1,w:"Regular users ≥ 1000 (or 500). System accounts usually 1–499."},
+{t:14,q:"System accounts are…",o:["for administrators","for services, not for people to log in","the root account","guest users"],a:1,w:"They usually have a non-login shell like /usr/sbin/nologin."},
+{t:14,q:"What's the risk of <code>userdel user01</code> without <code>-r</code>?",o:["None","Files stay with an unassigned UID; a new user with that UID will own them","The system crashes","Root is deleted"],a:1,w:"Organizations usually lock accounts instead of deleting them."},
+{t:14,q:"Which command finds files with no owner?",o:["find / -nouser -o -nogroup","ls -orphan","du -nouser","grep -nouser"],a:0,w:"Run as root."},
+{t:14,q:"<code>su</code> vs <code>sudo</code>:",o:["Same","su switches to another user's shell (their password); sudo runs ONE command as root with your own password","sudo needs root's password","su runs one command"],a:1,w:"sudo logs every command and works even if root has no password."},
+{t:14,q:"Every user has exactly one…",o:["secondary group","primary group","sudo group","shell"],a:1,w:"Primary group in /etc/passwd; secondary groups in /etc/group."},
+{t:14,q:"What does the <code>x</code> permission mean on a DIRECTORY?",o:["Run it","You may cd into it","Delete it","Nothing"],a:1,w:"r on a directory = list it (ls); w = create/delete files in it."},
+{t:14,q:"A user can delete a file they have no write permission on, if…",o:["never","they have write permission on the directory","the file is hidden","they are in the group"],a:1,w:"Deleting is controlled by the directory's w permission."},
+{t:14,q:"Who can change the owner of a file with chown?",o:["Any user","The file owner","Only root","The group"],a:2,w:"The owner (if in the target group) and root can change the group."},
+{t:14,q:"What does the sticky bit (<code>o+t</code>) do on a directory?",o:["Makes files executable","Users can only delete their OWN files in it","Hides files","Locks the directory"],a:1,w:"Like /tmp."},
+{t:14,q:"SUID (<code>u+s</code>) on a file means…",o:["It runs as the owner of the file, not the user who started it","It's hidden","It can't be deleted","It runs as the group"],a:0,w:"SGID (g+s) on a directory: new files get the directory's group."},
+{t:14,q:"SELinux adds…",o:["Antivirus","Mandatory Access Control (MAC) based on labels and policies","A firewall","A new shell"],a:1,w:"See the SELinux context with ls -Z. It is NOT antivirus or a replacement for passwords/firewalls."},
+{t:14,q:"Which tool cracks password hashes using CPU/GPU?",o:["hashcat","nmap","wireshark","fls"],a:0,w:"hashcat -m 1000 -a 0 hashes.txt rockyou.txt. Other Kali tools: John the Ripper, Nmap, Metasploit, Burp Suite, Wireshark."},
+{t:14,q:"Kali Linux is based on…",o:["Red Hat","Debian","Arch","Windows"],a:1,w:"Used for pentesting and forensics. Only pentest systems you have written permission for."}
+);
+
+BLANKS.push(
+{t:9,q:"Software that creates and manages VMs: ____",a:["hypervisor"]},
+{t:9,q:"VMware virtual disk file extension: .____",a:["vmdk"]},
+{t:9,q:"VMware configuration file extension: .____",a:["vmx"]},
+{t:9,q:"Default VMware network mode used in the labs: ____",a:["nat"]},
+{t:9,q:"A ____ clone needs the original VM to work.",a:["linked"]},
+{t:7,q:"Open a shell in a running container: <code>docker ____ -it name /bin/bash</code>",a:["exec"]},
+{t:7,q:"List images: <code>docker ____</code>",a:["images"]},
+{t:7,q:"Remove an image: <code>docker ____ ubuntu</code>",a:["rmi"]},
+{t:7,q:"Map host port 8000 to container port 5000: <code>docker run ____ 8000:5000 web</code>",a:["-p"]},
+{t:7,q:"Start a Compose app in the background: <code>docker compose up ____</code>",a:["-d"]},
+{t:7,q:"Follow a container's logs: <code>docker logs ____ name</code>",a:["-f"]},
+{t:10,q:"Run two commands on one line: <code>cmd1 ____ cmd2</code>",a:[";"]},
+{t:10,q:"Send error messages into the void: <code>cmd ____ /dev/null</code>",a:["2>"]},
+{t:10,q:"Wildcard for exactly ONE character: ____",a:["?"]},
+{t:10,q:"Rerun the previous command with sudo: <code>sudo ____</code>",a:["!!"]},
+{t:10,q:"Remove duplicate adjacent lines: <code>cat tmp | ____</code>",a:["uniq"]},
+{t:10,q:"Sort the lines of a file: <code>cat myFile | ____</code>",a:["sort"]},
+{t:10,q:"2nd column, space as delimiter: <code>cut -d \" \" ____ 2 myFile</code>",a:["-f"]},
+{t:10,q:"Print columns 1 and 4: <code>awk '{print ____, $4}' myFile</code>",a:["$1"]},
+{t:10,q:"Compare two files: <code>____ file1 file2</code>",a:["diff"]},
+{t:10,q:"grep: match at the START of a line with ____",a:["^"]},
+{t:10,q:"grep: match at the END of a line with ____",a:["$"]},
+{t:10,q:"Detailed manual for ls: <code>____ ls</code>",a:["man"]},
+{t:10,q:"Remove an alias: <code>____ test</code>",a:["unalias"]},
+{t:10,q:"Search history shortcut: Ctrl+____",a:["r"]},
+{t:11,q:"Architecture with separate buses for instructions and data: ____",a:["harvard"]},
+{t:11,q:"x86 (Intel, AMD) is a ____ architecture.",a:["cisc"]},
+{t:11,q:"ARM is a ____ architecture.",a:["risc"]},
+{t:11,q:"A byte has ____ bits.",a:["8"]},
+{t:12,q:"CPU part for arithmetic and logic: ____",a:["alu"]},
+{t:12,q:"Register with the address of the next instruction: program ____",a:["counter"]},
+{t:12,q:"Instruction cycle: fetch, ____, execute, store.",a:["decode"]},
+{t:12,q:"DDR4-2133 transfers 2133 ____ (unit).",a:["mt/s","mts"]},
+{t:12,q:"MB/s = ____ × MT/s for DDR memory.",a:["8"]},
+{t:12,q:"SSD command that resets blocks with deleted data: ____",a:["trim"]},
+{t:13,q:"Default Ubuntu file system: ____",a:["ext4"]},
+{t:13,q:"Show free disk space: ____",a:["df"]},
+{t:13,q:"Show folder sizes: ____",a:["du"]},
+{t:13,q:"Unmount a device: ____ /mnt/usbdrive",a:["umount"]},
+{t:13,q:"RAID level for mirroring: RAID ____",a:["1"]},
+{t:13,q:"RAID 5 needs at least ____ disks.",a:["3"]},
+{t:14,q:"Hardware test at power-on: ____",a:["post"]},
+{t:14,q:"Random characters added to a password before hashing: ____",a:["salt"]},
+{t:14,q:"root has UID ____",a:["0"]},
+{t:14,q:"Lock a user account: <code>usermod ____ user01</code>",a:["-l"]},
+{t:14,q:"Show SELinux context: <code>ls ____ file1</code>",a:["-z"]}
+);
+
+FLASH.push(
+{t:9,f:"Hypervisor",b:"Software between hardware and guest OSes that creates VMs and gives them CPU, RAM, storage, network."},
+{t:9,f:"Type 1 vs Type 2",b:"Type 1: bare metal, servers (ESXi, Hyper-V Server, Xen)<br>Type 2: hosted on an OS (VMware Workstation, Fusion, VirtualBox)"},
+{t:9,f:"Host OS · Guest OS · VM",b:"Host: the OS the computer boots<br>Guest: OS inside the VM<br>VM: environment with a virtual disk where the guest runs"},
+{t:9,f:"VMware files",b:".vmx settings · .vmdk virtual disk · .vmem memory (running/suspended) · .log troubleshooting"},
+{t:9,f:"Network modes",b:"Bridged: on the host's network<br>NAT (default): private network + NAT to internet<br>Host only: separate private network"},
+{t:9,f:"Snapshot vs clone",b:"Snapshot: saved state to revert to<br>Full clone: independent copy<br>Linked clone: needs the original, fast to create, slower to use"},
+{t:9,f:"Virtualization types",b:"Server · Desktop · Data (federation) · Storage · Application · Network functions (NFV)"},
+{t:9,f:"VMware Tools / open-vm-tools",b:"Installed inside the VM for better performance and host integration. Linux: sudo apt-get install open-vm-tools"},
+{t:7,f:"Image vs container",b:"Image: package with everything to run an app<br>Container: running instance of an image"},
+{t:7,f:"Registry",b:"Stores images: Docker Hub, ACR, ECR, GitLab, Quay. pull = download, push = upload."},
+{t:7,f:"More docker commands",b:"docker stop · rm · images · rmi · pull · exec -it name bash · logs -f · run -p 8080:80 · run -v ~/v1:/v1"},
+{t:7,f:"Docker Compose",b:"Multi-container app in one YAML file.<br>docker compose up (-d) · docker compose stop"},
+{t:7,f:"Docker volumes",b:"Persist data. docker volume create / ls / rm / inspect · run --mount source=vol,target=/app"},
+{t:7,f:"Container engines",b:"Docker (dominant) · Podman (rootless, daemonless) · runC · Windows/Hyper-V containers"},
+{t:7,f:"WSL",b:"Windows Subsystem for Linux: Linux on Windows. Windows C:\\ at /mnt/c. Don't use it for the labs."},
+{t:10,f:"command [options] [arguments]",b:"usermod -L user01 → command usermod, option -L, argument user01. Linux is case-sensitive."},
+{t:10,f:"Linux = kernel + GNU",b:"Kernel: core, manages hardware/processes. GNU: free versions of UNIX tools. Shell: interface to the kernel."},
+{t:10,f:"CLI vs GUI",b:"CLI shells: bash, sh, ksh · Windows cmd, PowerShell<br>GUI: GNOME, KDE · Windows desktop"},
+{t:10,f:"Help commands",b:"ls --help · man ls · info ls · apropos keyword"},
+{t:10,f:"Terminal shortcuts",b:"Tab autocomplete · Ctrl+A start · Ctrl+E end · Ctrl+U clear left · Ctrl+K clear right · Ctrl+R search history · Ctrl+C stop"},
+{t:10,f:"History",b:"history · !26 runs command 26 · !ls runs last ls command · sudo !! reruns previous with sudo"},
+{t:10,f:"Wildcards",b:"* any number · ? exactly one · [aop] one of these · [^c] not c · [a-d] range"},
+{t:10,f:"Text tools",b:"sort · uniq (remove repeats) · cut -d \" \" -f 2 · paste/join · sed (stream editor) · awk '{print $1}' · diff"},
+{t:10,f:"Redirection",b:"> overwrite · >> append · 2> errors · 2> /dev/null hide errors · | pipe"},
+{t:10,f:"stdin / stdout / stderr",b:"stdin = keyboard · stdout (1) = screen · stderr (2) = error messages"},
+{t:10,f:"grep patterns",b:"^start · end$ · . any char · ? once · + at least once · * 0 or more · | or · [] set"},
+{t:10,f:"Regex classes",b:"\\d digit · \\w word char · \\s whitespace · capitals = NOT · {3} exactly · {2,4} range"},
+{t:10,f:"find extras",b:"-maxdepth 3 · -type f · -size +6M · -exec ls -lh {} \\;"},
+{t:10,f:"cp/mv/rm options",b:"-v verbose · -i interactive (ask) · -n no clobber · -r recursive"},
+{t:11,f:"Von Neumann",b:"Instructions and data in the SAME memory and bus → bottleneck: one at a time, sequential."},
+{t:11,f:"Harvard",b:"Separate memory and buses for instructions and data → both at once. DSPs, microcontrollers. Modern CPUs: modified Harvard."},
+{t:11,f:"RISC vs CISC",b:"RISC: simple instructions, low power, ARM/Apple M/Snapdragon<br>CISC: complex instructions, Intel/AMD x86"},
+{t:11,f:"Architecture vs organization",b:"Architecture = WHAT (ISA)<br>Organization = HOW (microarchitecture)"},
+{t:11,f:"Assembly vs high-level",b:"Assembly: mnemonics, machine-dependent, assembler<br>High-level: English-like, machine-independent, compiler/interpreter"},
+{t:11,f:"Driver",b:"Software so the OS can talk to a device. Function driver (talks to device) + filter drivers. Software drivers run in kernel mode."},
+{t:11,f:"Computer = 4 tasks",b:"Input · store (RAM temporary, disk permanent) · process (CPU) · output"},
+{t:11,f:"Bit & byte",b:"Bit = 0/1. Byte = 8 bits = 256 values. ASCII: A = 01000001."},
+{t:12,f:"Instruction cycle",b:"Fetch → Decode → Execute → Store"},
+{t:12,f:"CPU parts",b:"ALU (math + logic) · Registers (fast memory) · Control unit · FPU (floating point)"},
+{t:12,f:"Special registers",b:"Program counter: next instruction · Instruction register: current · State register: flags · Stack pointer: top of LIFO stack"},
+{t:12,f:"Cores & threads",b:"Multicore: several cores, 1 socket<br>Multiprocessing: several CPUs<br>Hyperthreading: 1 core = 2 threads (4 cores → 8 logical)"},
+{t:12,f:"Single vs multi core",b:"Single core: context switching<br>Multicore: true parallel. Big gain with multithreaded software (video editing, 3D)."},
+{t:12,f:"DDR naming",b:"DDR4-2400 = 2400 MT/s<br>PC4-19200 = 19200 MB/s<br>MB/s = 8 × MT/s"},
+{t:12,f:"SSD vs HDD",b:"SSD: NAND flash, no moving parts, fast, silent, less power; limited P/E cycles, pricier<br>HDD: spinning platters + heads"},
+{t:12,f:"TBW",b:"Terabytes Written over the drive's life. 365 TBW / 5 years = 200 GB per day."},
+{t:12,f:"Clusters",b:"NTFS min 512 B, default 4 KB, max 64 KB. 150 KB file → 38 clusters, 2 KB slack."},
+{t:13,f:"File systems",b:"Windows: FAT, FAT32 (4 GB files), exFAT, NTFS<br>Linux: ext2/3/4, XFS (RHEL), ZFS, Btrfs"},
+{t:13,f:"Journaling",b:"Keeps a journal of changes → fast recovery. Cost: more reads/writes. ext4 is journaling."},
+{t:13,f:"Partition → format → mount",b:"Partition the disk, format it, then mount it: mkdir /mnt/usb · mount /dev/sdb1 /mnt/usb · umount"},
+{t:13,f:"Absolute vs relative path",b:"Absolute: from / (/usr/share/dict/words)<br>Relative: from here (dict/words) · . current · .. parent"},
+{t:13,f:"du vs df",b:"du: disk usage of folders<br>df: free space per file system"},
+{t:13,f:"Hard vs soft link details",b:"Hard: same inode, counter > 1, same partition only, survives rename<br>Soft: own inode, breaks if target moves (orphan), can cross disks"},
+{t:13,f:"FAT table",b:"For each cluster: used/free and the next cluster (chain). Boot sector · FAT entries · root directory · data area."},
+{t:13,f:"RAID levels",b:"0 striping (fast, no safety) · 1 mirroring · 5 striping + parity (≥3 disks, 1 may fail) · 6 two parities (≥4, 2 may fail) · 10 = 1+0"},
+{t:14,f:"Boot process",b:"BIOS/UEFI → POST (hardware test) → bootloader (Windows 11: BOOTMGR) → OS"},
+{t:14,f:"BIOS vs UEFI",b:"UEFI: newer, graphical, supports disks > 2 TB. Enter with DEL, F1 or F2. Settings: boot order, CPU, fans, power, Wake-on-LAN, password."},
+{t:14,f:"Troubleshooting",b:"Write down steps · note errors · check cables · elimination. Disk: chkdsk, S.M.A.R.T. · RAM: memory diagnostics · Slow: task manager, free space, device manager"},
+{t:14,f:"OS vulnerabilities",b:"Privilege escalation · injection flaws · unpatched software · insecure configuration · malware. Fix: update!"},
+{t:14,f:"/etc/passwd fields",b:"username : x : UID : GID : comment : home : shell<br>x = password is in /etc/shadow"},
+{t:14,f:"UIDs",b:"0 = root · 1–499 = system accounts (services, nologin shell) · ≥ 1000 (or 500) = regular users"},
+{t:14,f:"Hash & salt",b:"Passwords are hashed in /etc/shadow. Salt = random characters added so rainbow tables don't work."},
+{t:14,f:"su vs su - vs sudo",b:"su: new user, their password, current env<br>su -: also their environment<br>sudo: one command as root, YOUR password, logged"},
+{t:14,f:"usermod options",b:"-aG add to groups · -G set groups · -g primary group · -L lock · -c comment · -d home · -m move home · -s shell"},
+{t:14,f:"userdel risk",b:"userdel keeps the home; userdel -r deletes it. Orphaned files get reused by a new user with the same UID. find / -nouser -o -nogroup"},
+{t:14,f:"r w x on directories",b:"r: list (ls) · w: create/delete files inside · x: cd into it"},
+{t:14,f:"Symbolic chmod",b:"chmod a+r file · chmod go-w file · chmod a+x,g+w file (u = owner, g = group, o = others, a = all)"},
+{t:14,f:"Special permissions",b:"u+s SUID: runs as file owner<br>g+s SGID: runs as group; on dir new files get dir's group<br>o+t sticky: only delete your own files"},
+{t:14,f:"SELinux",b:"Mandatory Access Control with labels (user:role:type:level). ls -Z. Not antivirus, not a firewall."}
+);
+
+CMD.push(
+{t:7,q:"Stop the container <code>c75a27b8c9a3</code>.",a:[/^docker stop c75a27b8c9a3$/],s:"docker stop c75a27b8c9a3"},
+{t:7,q:"Remove the container <code>c75a27b8c9a3</code>.",a:[/^docker rm c75a27b8c9a3$/],s:"docker rm c75a27b8c9a3"},
+{t:7,q:"List all Docker images on your system.",a:[/^docker images$/,/^docker image ls$/],s:"docker images"},
+{t:7,q:"Download the <code>ubuntu</code> image.",a:[/^docker pull ubuntu$/],s:"docker pull ubuntu"},
+{t:7,q:"Start an interactive Ubuntu container with bash.",a:[/^docker run -it ubuntu (\/bin\/)?bash$/],s:"docker run -it ubuntu /bin/bash"},
+{t:7,q:"Open a bash shell in the running container <code>web</code>.",a:[/^docker exec -it web (\/bin\/)?(bash|sh)$/],s:"docker exec -it web /bin/bash"},
+{t:7,q:"Follow the logs of the container <code>web</code>.",a:[/^docker logs -f web$/],s:"docker logs -f web"},
+{t:7,q:"Run <code>nginx</code> with host port 8080 mapped to container port 80.",a:[/^docker run (-d )?-p 8080:80 nginx$/],s:"docker run -p 8080:80 nginx"},
+{t:7,q:"Create a Docker volume called <code>my-vol</code>.",a:[/^docker volume create my-vol$/],s:"docker volume create my-vol"},
+{t:7,q:"Start a Compose app in the background.",a:[/^docker compose up -d$/,/^docker-compose up -d$/],s:"docker compose up -d"},
+{t:10,q:"Run <code>pwd</code> and then <code>ls</code> on one line.",a:[/^pwd ?; ?ls$/],s:"pwd ; ls"},
+{t:10,q:"Run the previous command again, but with sudo.",a:[/^sudo !!$/],s:"sudo !!"},
+{t:10,q:"Run command number 26 from your history.",a:[/^!26$/],s:"!26"},
+{t:10,q:"Show the kernel version.",a:[/^uname -r$/],s:"uname -r"},
+{t:10,q:"Show your current username.",a:[/^whoami$/],s:"whoami"},
+{t:10,q:"Show the manual of <code>ls</code>.",a:[/^man ls$/],s:"man ls"},
+{t:10,q:"Count how many PDF files are in this folder.",a:[/^ls( -l)? \*\.pdf \| wc -l$/],s:"ls -l *.pdf | wc -l"},
+{t:10,q:"Show <code>tmp</code> without repeated lines.",a:[/^cat tmp \| uniq$/,/^uniq tmp$/],s:"cat tmp | uniq"},
+{t:10,q:"Show <code>myFile</code> sorted alphabetically.",a:[/^cat myFile \| sort$/,/^sort myFile$/],s:"sort myFile"},
+{t:10,q:"Show the 2nd field of every line of <code>myFile</code> (space-separated).",a:[/^cut -d ["'] ["'] -f ?2 myFile$/,/^cut -f ?2 -d ["'] ["'] myFile$/],s:"cut -d \" \" -f 2 myFile"},
+{t:10,q:"Print the 1st and 4th column of <code>myFile</code> with awk.",a:[/^awk ['"]\{ ?print \$1, ?\$4 ?\}['"] myFile$/,/^awk -F ?['"] ['"] ['"]\{ ?print \$1, ?\$4 ?\}['"] myFile$/],s:"awk '{print $1, $4}' myFile"},
+{t:10,q:"Search for <code>hello</code> in <code>/sys</code> recursively and hide the error messages.",a:[/^grep -r ["']?hello["']? \/sys 2> ?\/dev\/null$/],s:"grep -r \"hello\" /sys 2> /dev/null"},
+{t:10,q:"Show the lines of <code>file</code> that start with <code>te</code>.",a:[/^grep ["']?\^te["']? file$/],s:"grep ^te file"},
+{t:10,q:"Show the lines of <code>file</code> that end with <code>x</code>.",a:[/^grep ["']?x\$["']? file$/],s:"grep x$ file"},
+{t:10,q:"Find files under <code>/usr</code> bigger than 6 MB.",a:[/^(sudo )?find \/usr (-type f )?-size \+6M$/,/^(sudo )?find \/usr -size \+6M -type f$/],s:"find /usr -type f -size +6M"},
+{t:10,q:"Find <code>passwd</code> starting from <code>/</code>, max 3 levels deep.",a:[/^(sudo )?find \/ -maxdepth 3 -name ["']?passwd["']?$/],s:"sudo find / -maxdepth 3 -name \"passwd\""},
+{t:10,q:"Remove the alias <code>test</code>.",a:[/^unalias test$/],s:"unalias test"},
+{t:10,q:"Compare <code>file1</code> and <code>file2</code>.",a:[/^diff file1 file2$/],s:"diff file1 file2"},
+{t:10,q:"Copy <code>a.txt</code> to <code>b.txt</code> but ask before overwriting.",a:[/^cp -i a\.txt b\.txt$/],s:"cp -i a.txt b.txt"},
+{t:13,q:"Show the free space of all mounted file systems.",a:[/^df( -h)?$/],s:"df"},
+{t:13,q:"Show how much space your home folder uses.",a:[/^du( -sh| -h| -s)? ~\/?$/],s:"du ~"},
+{t:13,q:"Mount <code>/dev/sdb1</code> on <code>/mnt/usbdrive</code>.",a:[/^(sudo )?mount \/dev\/sdb1 \/mnt\/usbdrive\/?$/],s:"mount /dev/sdb1 /mnt/usbdrive"},
+{t:13,q:"Unmount <code>/mnt/usbdrive</code>.",a:[/^(sudo )?umount \/mnt\/usbdrive\/?$/,/^(sudo )?umount \/dev\/sdb1$/],s:"umount /mnt/usbdrive"},
+{t:13,q:"Show the details of the directory <code>Downloads</code> itself, not its contents.",a:[/^ls -(dl|ld)h? Downloads\/?$/,/^ls -(dlh|ldh|hld|hdl|dhl|lhd) Downloads\/?$/],s:"ls -dl Downloads"},
+{t:14,q:"Lock the account of <code>user01</code>.",a:[/^(sudo )?usermod -L user01$/,/^(sudo )?passwd -l user01$/],s:"usermod -L user01"},
+{t:14,q:"Delete <code>user01</code> AND their home folder with userdel.",a:[/^(sudo )?userdel -r user01$/],s:"userdel -r user01"},
+{t:14,q:"Find all files that have no owner or no group.",a:[/^(sudo )?find \/ -nouser -o -nogroup$/],s:"find / -nouser -o -nogroup"},
+{t:14,q:"Show the password aging info of <code>koen2</code>.",a:[/^(sudo )?chage -l koen2$/],s:"chage -l koen2"},
+{t:14,q:"Give everyone read permission on <code>file</code> (symbolic).",a:[/^chmod a\+r file$/,/^chmod ugo\+r file$/,/^chmod \+r file$/],s:"chmod a+r file"},
+{t:14,q:"Remove write permission for group and others on <code>file</code>.",a:[/^chmod (go|og)-w file$/],s:"chmod go-w file"},
+{t:14,q:"Give <code>file</code> permissions rwx for owner, rw- for group, r-- for others.",a:[/^chmod 764 file$/],s:"chmod 764 file"},
+{t:14,q:"Make <code>user03</code> owner of the whole <code>Documents</code> tree.",a:[/^(sudo )?chown -R user03 Documents\/?$/],s:"chown -R user03 Documents"},
+{t:14,q:"Show the SELinux context of <code>file1</code>.",a:[/^ls -Z file1$/],s:"ls -Z file1"},
+{t:14,q:"Check whether user <code>koenk</code> exists by searching <code>/etc/passwd</code>.",a:[/^cat \/etc\/passwd \| grep koenk$/,/^grep koenk \/etc\/passwd$/],s:"grep koenk /etc/passwd"}
+);
+
 /* ================= HELPERS ================= */
 const $ = s => document.querySelector(s);
 const app = $("#app");
@@ -367,7 +691,7 @@ function load(k, d){ try { const v = localStorage.getItem("caos-"+k); return v ?
 /* ===== random conversion questions ===== */
 const PERM = n => ["---","--x","-w-","-wx","r--","r-x","rw-","rwx"][n];
 function genConv(){
-  const kind = rnd(0, 7);
+  const kind = rnd(0, 9);
   if (kind === 0) { const n = rnd(1, 255); return {t:8, q:`Convert decimal <b>${n}</b> to binary.`, a:[n.toString(2)], w:`${n} = ${n.toString(2)}. Place values: 128 64 32 16 8 4 2 1.`}; }
   if (kind === 1) { const n = rnd(1, 255), b = n.toString(2).padStart(8,"0"); return {t:8, q:`Convert binary <b>${b}</b> to decimal.`, a:[String(n)], w:`Add the place values of each 1: ${b.split("").map((c,i)=>c==="1"?2**(7-i):null).filter(x=>x!==null).join(" + ")} = ${n}.`}; }
   if (kind === 2) { const n = rnd(16, 255); return {t:8, q:`Convert decimal <b>${n}</b> to hexadecimal.`, a:[n.toString(16)], w:`${n} = ${Math.floor(n/16)} × 16 + ${n%16} → ${n.toString(16).toUpperCase()}.`}; }
@@ -375,6 +699,10 @@ function genConv(){
   if (kind === 4) { const n = rnd(1, 255), b = n.toString(2).padStart(8,"0"); return {t:8, q:`Convert binary <b>${b}</b> to hexadecimal.`, a:[n.toString(16)], w:`Split in groups of 4 bits: ${b.slice(0,4)} = ${parseInt(b.slice(0,4),2).toString(16).toUpperCase()}, ${b.slice(4)} = ${parseInt(b.slice(4),2).toString(16).toUpperCase()} → ${n.toString(16).toUpperCase()}.`}; }
   if (kind === 5) { const o=[rnd(4,7),rnd(0,7),rnd(0,7)], s=o.map(PERM).join(""); return {t:4, q:`Write <b><code>${s}</code></b> as a chmod number.`, a:[o.join("")], w:`r=4, w=2, x=1 per group: ${o.join(" ")} → chmod ${o.join("")}.`}; }
   if (kind === 6) { const o=[rnd(4,7),rnd(0,7),rnd(0,7)]; return {t:4, q:`Write <b>chmod ${o.join("")}</b> as rwx letters (9 characters).`, a:[o.map(PERM).join("")], w:`${o.map(n=>n+" = "+PERM(n)).join(", ")}.`}; }
+  if (kind === 8) { const g = [3,4,5][rnd(0,2)], mts = {3:[1066,1333,1600,1866],4:[2400,2666,3200],5:[4800,5600,6400,8800]}[g], m = mts[rnd(0, mts.length-1)];
+    return {t:12, q:`DDR${g}-${m} memory is also called PC${g}-? (transfer speed in MB/s)`, a:[String(8*m)], w:`MB/s = 8 × MT/s = 8 × ${m} = ${8*m}.`}; }
+  if (kind === 9) { const kb = rnd(1, 200), n = Math.ceil(kb / 4);
+    return {t:12, q:`How many 4 KB clusters does a <b>${kb} KB</b> file need on NTFS?`, a:[String(n)], w:`${kb} / 4 = ${(kb/4).toString().replace(".",",")} → round up to ${n} clusters (${n*4} KB, so ${n*4-kb} KB slack).`}; }
   const size = rnd(1, 15) * 512, cl = 4096, used = Math.ceil(size / cl) * cl;
   return {t:8, q:`A file of <b>${size} bytes</b> on a disk with 4096-byte (4 KiB) clusters. How many bytes of slack space?`, a:[String(used - size)], w:`It uses ${used/cl} cluster(s) = ${used} bytes. Slack = ${used} − ${size} = ${used - size}.`};
 }
@@ -430,6 +758,7 @@ function mcq(){
     const pool = shuffle(byTopic(MCQ, +$("#mt").value)).slice(0, 10).map(q => ({...q, order: shuffle([...q.o.keys()]), done:false}));
     let score = 0, answered = 0;
     const box = $("#mq");
+    if (!pool.length) { box.innerHTML = `<div class="card muted">No questions for this topic.</div>`; return; }
     box.innerHTML = `<div class="progress"><i id="mp"></i></div>` + pool.map(mcqHTML).join("") + `<div class="card hidden" id="mres"></div>`;
     box.querySelectorAll(".card[data-i]").forEach(card => {
       const q = pool[+card.dataset.i];
@@ -495,6 +824,7 @@ function blanks(){
   $("#bgo").onclick = () => {
     const pool = shuffle(byTopic(BLANKS, +$("#bt").value)).slice(0, 10);
     const box = $("#bq");
+    if (!pool.length) { box.innerHTML = `<div class="card muted">No fill-in-the-blanks for this topic. Pick another one or All.</div>`; return; }
     box.innerHTML = pool.map((b,i) => blankHTML(b,i)).join("") + `<div class="card"><div class="row"><button class="btn" id="bcheck">Check all</button><button class="btn ghost" id="bnew">New round</button></div><div id="bres" style="margin-top:12px"></div></div>`;
     wireEnter(box, ".card[data-b]", pool, checkBlank);
     $("#bcheck").onclick = () => { let s = 0; box.querySelectorAll(".card[data-b]").forEach(c => { s += checkBlank(c, pool[+c.dataset.b]) ? 1 : 0; }); $("#bres").innerHTML = `<div class="score">${s} / ${pool.length}</div>`; };
@@ -510,6 +840,7 @@ function cmd(){
   $("#cgo").onclick = () => {
     const pool = shuffle(byTopic(CMD, +$("#ct").value)).slice(0, 10);
     const box = $("#cq");
+    if (!pool.length) { box.innerHTML = `<div class="card muted">No command tasks for this topic (it's theory only). Pick another one or All.</div>`; return; }
     box.innerHTML = pool.map(cmdHTML).join("") + `<div class="card"><div class="row"><button class="btn" id="ccheck">Check all</button><button class="btn ghost" id="cnew">New round</button></div><div id="cres" style="margin-top:12px"></div></div>`;
     wireEnter(box, ".card[data-c]", pool, checkCmd);
     $("#ccheck").onclick = () => { let s = 0; box.querySelectorAll(".card[data-c]").forEach(c => { s += checkCmd(c, pool[+c.dataset.c]) ? 1 : 0; }); $("#cres").innerHTML = `<div class="score">${s} / ${pool.length}</div>`; };
